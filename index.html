@@ -1,13 +1,2685 @@
 <!-- index.html -->
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>웹 호스팅</title>
+    <title>현장 작업자 필수 용어집 66선 | 스마트 온보딩 아카데미</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Pretendard / Noto Sans KR / Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        /* 3D Flip Card Styles */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        /* Interactive SVG Hover */
+        .chamber-part {
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+        .chamber-part:hover {
+            filter: drop-shadow(0 0 8px rgba(37, 99, 235, 0.6));
+            opacity: 0.95;
+        }
+        .chamber-part.active-part {
+            stroke: #f59e0b !important;
+            stroke-width: 3.5px !important;
+            filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.75));
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+        }
+    </style>
 </head>
-<body>
-    git pages 입니다.
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-blue-600 selection:text-white">
+
+    <!-- 상단 고정 헤더 & 학습 진도율 바 -->
+    <header class="sticky top-0 z-40 bg-slate-900 text-white shadow-lg border-b border-slate-800 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between py-3 gap-3">
+                <!-- 로고 & 타이틀 -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md shadow-blue-500/30">
+                            <i class="fa-solid fa-microchip text-xl text-white"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-400/30 rounded-full">신규 입사자 온보딩 표준 교안</span>
+                                <span class="text-xs text-slate-400 hidden sm:inline">반도체·세라믹 정밀가공·세정·검사</span>
+                            </div>
+                            <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-white">
+                                현장 작업자 필수 용어집 <span class="text-amber-400">66선</span> 아카데미
+                            </h1>
+                        </div>
+                    </div>
+                    <!-- 모바일용 진도 배지 -->
+                    <button onclick="switchTab('quiz')" class="md:hidden px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-xs font-bold text-amber-400">
+                        진도 <span id="mobileProgressText">0/66</span>
+                    </button>
+                </div>
+
+                <!-- 우측 학습 진도 게이지 & CSV 관리 버튼 -->
+                <div class="flex items-center gap-4 self-end md:self-auto">
+                    <div class="hidden sm:flex flex-col w-56 bg-slate-800/90 px-3.5 py-2 rounded-xl border border-slate-700">
+                        <div class="flex justify-between items-center text-xs mb-1">
+                            <span class="font-semibold text-slate-300"><i class="fa-solid fa-chart-line text-emerald-400 mr-1"></i>나의 학습 진도율</span>
+                            <span id="headerProgressCount" class="font-extrabold text-emerald-400">0 / 66 (0%)</span>
+                        </div>
+                        <div class="w-full h-2 bg-slate-700 rounded-full overflow-hidden">
+                            <div id="headerProgressBar" class="h-full bg-gradient-to-r from-blue-500 to-emerald-400 transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <label for="csvFileInput" class="cursor-pointer px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 flex items-center gap-1.5 transition" title="교안 CSV 파일을 업로드하여 용어 데이터를 업데이트합니다">
+                            <i class="fa-solid fa-file-csv text-emerald-400"></i>
+                            <span class="hidden lg:inline">교안 CSV 연동</span>
+                        </label>
+                        <input id="csvFileInput" type="file" accept=".csv" class="hidden" onchange="handleCSVUpload(event)">
+
+                        <button onclick="exportCSV()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 flex items-center gap-1.5 transition" title="66개 현장 용어집 전체를 CSV로 다운로드합니다">
+                            <i class="fa-solid fa-download text-blue-400"></i>
+                            <span class="hidden lg:inline">용어집 다운로드</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 메인 네비게이션 탭 (6개 학습 모듈) -->
+            <nav class="flex items-center gap-1 overflow-x-auto pb-2 pt-1 no-scrollbar border-t border-slate-800/80">
+                <button onclick="switchTab('onboarding')" id="tabBtn-onboarding" class="nav-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap flex items-center gap-2 transition bg-blue-600 text-white shadow-sm">
+                    <i class="fa-solid fa-compass"></i>
+                    <span>1. 왕초보 입문 가이드 (챔버·공정도)</span>
+                </button>
+                <button onclick="switchTab('glossary')" id="tabBtn-glossary" class="nav-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap flex items-center gap-2 transition text-slate-300 hover:bg-slate-800">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>2. 66개 현장 용어 도감</span>
+                    <span class="px-1.5 py-0.5 text-[11px] bg-amber-400/20 text-amber-300 rounded-md">핵심</span>
+                </button>
+                <button onclick="switchTab('slang')" id="tabBtn-slang" class="nav-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap flex items-center gap-2 transition text-slate-300 hover:bg-slate-800">
+                    <i class="fa-solid fa-language"></i>
+                    <span>3. 현장 은어 ↔ 표준어 번역기</span>
+                </button>
+                <button onclick="switchTab('flashcard')" id="tabBtn-flashcard" class="nav-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap flex items-center gap-2 transition text-slate-300 hover:bg-slate-800">
+                    <i class="fa-solid fa-clone"></i>
+                    <span>4. 3분 암기 플래시카드</span>
+                </button>
+                <button onclick="switchTab('quiz')" id="tabBtn-quiz" class="nav-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap flex items-center gap-2 transition text-slate-300 hover:bg-slate-800">
+                    <i class="fa-solid fa-clipboard-check"></i>
+                    <span>5. 실전 안전·용어 퀴즈 & 수료증</span>
+                </button>
+                <button onclick="switchTab('benchmark')" id="tabBtn-benchmark" class="nav-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap flex items-center gap-2 transition text-slate-300 hover:bg-slate-800">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    <span>6. 기업 교육 벤치마킹 & 설계원칙</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 메인 컨텐츠 영역 -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- ==========================================
+             TAB 1: 왕초보 입문 가이드 (챔버 단면도 & 공정 흐름도)
+             ========================================== -->
+        <section id="tab-onboarding" class="tab-section space-y-8">
+            <!-- 히어로 배너: 기초 지식이 없는 신입사원을 위한 안내 -->
+            <div class="relative rounded-2xl bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white p-6 sm:p-8 shadow-xl overflow-hidden border border-blue-800/40">
+                <div class="relative z-10 max-w-3xl space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 border border-amber-400/40 text-amber-300 text-xs font-bold">
+                        <i class="fa-solid fa-lightbulb"></i> 처음 입사하셨나요? 걱정하지 마세요!
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold leading-tight">
+                        “선임님이 <span class="text-amber-400 underline decoration-wavy underline-offset-4">아라시</span> 치고 <span class="text-amber-400 underline decoration-wavy underline-offset-4">에프알(FR)</span> <span class="text-amber-400 underline decoration-wavy underline-offset-4">버큠척</span>에 물리라는데 무슨 말이지?”
+                    </h2>
+                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                        현장에서는 도면에 적힌 <strong>표준 용어(영문/한글)</strong>와 작업자끼리 부르는 <strong>현장 호칭(은어)</strong>이 함께 쓰입니다.
+                        기초 지식이 전혀 없어도 <strong>① 우리가 만드는 부품이 어디에 쓰이는지</strong>, <strong>② 어떤 소재로 어떻게 가공하는지</strong>, <strong>③ 절대 해서는 안 되는 안전·불량 주의사항</strong>만 알면 현장 베테랑과 즉시 소통할 수 있습니다.
+                    </p>
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <button onclick="switchTab('glossary')" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm shadow-lg shadow-blue-600/30 flex items-center gap-2 transition">
+                            <span>66개 용어 도감 바로가기</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                        <button onclick="switchTab('slang')" class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm border border-white/20 flex items-center gap-2 transition">
+                            <i class="fa-solid fa-comments text-amber-400"></i>
+                            <span>현장 은어 1초 검색</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="hidden lg:block absolute right-8 bottom-4 opacity-15 pointer-events-none">
+                    <i class="fa-solid fa-industry text-[150px]"></i>
+                </div>
+            </div>
+
+            <!-- STEP 1: 우리가 만드는 제품은 어디에 들어가나요? (인터랙티브 반도체 식각 챔버 해부도) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-5 border-b border-slate-100">
+                    <div>
+                        <span class="text-xs font-extrabold text-blue-600 uppercase tracking-wider">STEP 01 · 시각적 구조 이해</span>
+                        <h3 class="text-xl font-extrabold text-slate-900 mt-0.5">우리가 가공·세정하는 7대 핵심 제품은 어디에 장착될까요?</h3>
+                        <p class="text-sm text-slate-600 mt-1">아래 <strong>반도체 플라즈마 식각 챔버(Chamber) 단면도</strong>에서 각 파츠를 클릭해 보세요!</p>
+                    </div>
+                    <span class="px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 text-xs font-bold self-start sm:self-center">
+                        <i class="fa-solid fa-hand-pointer mr-1"></i>도면의 부품을 클릭하면 상세 설명이 나옵니다
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6 items-center">
+                    <!-- 좌측: 인터랙티브 챔버 SVG 단면도 -->
+                    <div class="lg:col-span-7 bg-slate-900 rounded-2xl p-4 sm:p-6 border border-slate-800 relative">
+                        <div class="flex items-center justify-between text-xs text-slate-400 mb-3">
+                            <span class="font-bold text-slate-200"><i class="fa-solid fa-layer-group text-blue-400 mr-1.5"></i>반도체 플라즈마 식각 챔버(Etch Chamber) 단면 모식도</span>
+                            <span class="text-amber-400 font-semibold">클릭하여 파츠 선택</span>
+                        </div>
+                        <svg viewBox="0 0 600 410" class="w-full h-auto select-none">
+                            <defs>
+                                <radialGradient id="plasmaGlow" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="#a855f7" stop-opacity="0.45"/>
+                                    <stop offset="70%" stop-color="#3b82f6" stop-opacity="0.2"/>
+                                    <stop offset="100%" stop-color="#0f172a" stop-opacity="0"/>
+                                </radialGradient>
+                            </defs>
+
+                            <!-- 챔버 외벽 배경 -->
+                            <rect x="30" y="15" width="540" height="380" rx="22" fill="#1e293b" stroke="#475569" stroke-width="3"/>
+
+                            <!-- 플라즈마 영역 표시 -->
+                            <ellipse cx="300" cy="195" rx="210" ry="75" fill="url(#plasmaGlow)"/>
+                            <text x="300" y="198" text-anchor="middle" fill="#e9d5ff" font-size="13" font-weight="bold" opacity="0.85">⚡ 고밀도 플라즈마 반응 구역 (Plasma Zone)</text>
+
+                            <!-- 13. 가스 인젝터 (중심 노즐) -->
+                            <g class="chamber-part" onclick="selectChamberPart(13)" id="svg-part-13">
+                                <rect x="275" y="25" width="50" height="55" rx="6" fill="#38bdf8" stroke="#bae6fd" stroke-width="2"/>
+                                <text x="300" y="56" text-anchor="middle" fill="#0f172a" font-size="11" font-weight="800">#13 인젝터</text>
+                            </g>
+
+                            <!-- 7. 샤워헤드 / 상부 전극 -->
+                            <g class="chamber-part active-part" onclick="selectChamberPart(7)" id="svg-part-7">
+                                <rect x="115" y="80" width="370" height="44" rx="8" fill="#3b82f6" stroke="#93c5fd" stroke-width="2"/>
+                                <!-- 미세홀 표현 -->
+                                <g stroke="#dbeafe" stroke-width="1.5" stroke-dasharray="3,3">
+                                    <line x1="150" y1="80" x2="150" y2="124"/>
+                                    <line x1="185" y1="80" x2="185" y2="124"/>
+                                    <line x1="220" y1="80" x2="220" y2="124"/>
+                                    <line x1="255" y1="80" x2="255" y2="124"/>
+                                    <line x1="345" y1="80" x2="345" y2="124"/>
+                                    <line x1="380" y1="80" x2="380" y2="124"/>
+                                    <line x1="415" y1="80" x2="415" y2="124"/>
+                                    <line x1="450" y1="80" x2="450" y2="124"/>
+                                </g>
+                                <text x="300" y="107" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="800">#7 샤워헤드 / 상부 전극 (수백~수천 개 미세홀)</text>
+                            </g>
+
+                            <!-- 8. 곡면 전극 (상부 양측 R형상 표시) -->
+                            <g class="chamber-part" onclick="selectChamberPart(8)" id="svg-part-8">
+                                <path d="M115,124 Q300,152 485,124 L485,134 Q300,164 115,134 Z" fill="#6366f1" stroke="#c7d2fe" stroke-width="1.5"/>
+                                <text x="300" y="150" text-anchor="middle" fill="#e0e7ff" font-size="11" font-weight="700">#8 3차원 곡면 전극 (Concave/Convex R전극)</text>
+                            </g>
+
+                            <!-- 11. 챔버 라이너 (좌/우 원통형 내벽 보호) -->
+                            <g class="chamber-part" onclick="selectChamberPart(11)" id="svg-part-11">
+                                <rect x="52" y="75" width="38" height="275" rx="6" fill="#0d9488" stroke="#5eead4" stroke-width="2"/>
+                                <rect x="510" y="75" width="38" height="275" rx="6" fill="#0d9488" stroke="#5eead4" stroke-width="2"/>
+                                <text x="71" y="215" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="800" transform="rotate(-90 71 215)">#11 챔버 라이너 (C-Liner)</text>
+                                <text x="529" y="215" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="800" transform="rotate(90 529 215)">#11 챔버 라이너 (C-Liner)</text>
+                            </g>
+
+                            <!-- 웨이퍼 (Wafer - 중앙 피가공물) -->
+                            <rect x="190" y="246" width="220" height="10" rx="3" fill="#facc15" stroke="#fef08a" stroke-width="1.5"/>
+                            <text x="300" y="240" text-anchor="middle" fill="#fde047" font-size="11" font-weight="800">● 실리콘 웨이퍼 (고객사 반도체 기판)</text>
+
+                            <!-- 9. 포커스링 (웨이퍼 외곽을 감싸는 이너링) -->
+                            <g class="chamber-part" onclick="selectChamberPart(9)" id="svg-part-9">
+                                <path d="M140,242 L188,242 L188,256 L195,256 L195,272 L140,272 Z" fill="#f97316" stroke="#fed7aa" stroke-width="2"/>
+                                <path d="M460,242 L412,242 L412,256 L405,256 L405,272 L460,272 Z" fill="#f97316" stroke="#fed7aa" stroke-width="2"/>
+                                <text x="164" y="261" text-anchor="middle" fill="#ffffff" font-size="10.5" font-weight="800">#9 포커스링</text>
+                                <text x="436" y="261" text-anchor="middle" fill="#ffffff" font-size="10.5" font-weight="800">#9 포커스링</text>
+                            </g>
+
+                            <!-- 10. 커버링 / 에지링 (포커스링 바깥쪽 보호) -->
+                            <g class="chamber-part" onclick="selectChamberPart(10)" id="svg-part-10">
+                                <rect x="102" y="248" width="35" height="32" rx="4" fill="#ec4899" stroke="#fbcfe8" stroke-width="2"/>
+                                <rect x="463" y="248" width="35" height="32" rx="4" fill="#ec4899" stroke="#fbcfe8" stroke-width="2"/>
+                                <text x="119" y="268" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="800">#10 커버링</text>
+                                <text x="480" y="268" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="800">#10 커버링</text>
+                            </g>
+
+                            <!-- 12. 정전척 / 히터 베이스 (ESC) -->
+                            <g class="chamber-part" onclick="selectChamberPart(12)" id="svg-part-12">
+                                <rect x="175" y="258" width="250" height="75" rx="8" fill="#10b981" stroke="#a7f3d0" stroke-width="2"/>
+                                <text x="300" y="293" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="800">#12 정전척 / 히터 베이스 (ESC)</text>
+                                <text x="300" y="313" text-anchor="middle" fill="#d1fae5" font-size="11" font-weight="600">정전기 웨이퍼 고정 + 온도 제어 (AlN 세라믹)</text>
+                            </g>
+
+                            <!-- 13. 배플 (하부 배기 다공판) -->
+                            <g class="chamber-part" onclick="selectChamberPart(13)" id="svg-part-13-baffle">
+                                <rect x="95" y="338" width="75" height="22" rx="4" fill="#0ea5e9" stroke="#bae6fd" stroke-width="1.5"/>
+                                <rect x="430" y="338" width="75" height="22" rx="4" fill="#0ea5e9" stroke="#bae6fd" stroke-width="1.5"/>
+                                <text x="132" y="353" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="800">#13 배플판</text>
+                                <text x="467" y="353" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="800">#13 배플판</text>
+                            </g>
+                        </svg>
+
+                        <!-- 파츠 빠른 선택 버튼 -->
+                        <div class="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-slate-800">
+                            <button onclick="selectChamberPart(7)" class="px-2.5 py-1 rounded-lg bg-blue-600/30 hover:bg-blue-600 text-blue-200 hover:text-white text-xs font-bold transition">#7 샤워헤드</button>
+                            <button onclick="selectChamberPart(8)" class="px-2.5 py-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-600 text-indigo-200 hover:text-white text-xs font-bold transition">#8 곡면전극</button>
+                            <button onclick="selectChamberPart(9)" class="px-2.5 py-1 rounded-lg bg-orange-600/30 hover:bg-orange-600 text-orange-200 hover:text-white text-xs font-bold transition">#9 포커스링(FR)</button>
+                            <button onclick="selectChamberPart(10)" class="px-2.5 py-1 rounded-lg bg-pink-600/30 hover:bg-pink-600 text-pink-200 hover:text-white text-xs font-bold transition">#10 커버링</button>
+                            <button onclick="selectChamberPart(11)" class="px-2.5 py-1 rounded-lg bg-teal-600/30 hover:bg-teal-600 text-teal-200 hover:text-white text-xs font-bold transition">#11 챔버라이너</button>
+                            <button onclick="selectChamberPart(12)" class="px-2.5 py-1 rounded-lg bg-emerald-600/30 hover:bg-emerald-600 text-emerald-200 hover:text-white text-xs font-bold transition">#12 정전척(ESC)</button>
+                            <button onclick="selectChamberPart(13)" class="px-2.5 py-1 rounded-lg bg-sky-600/30 hover:bg-sky-600 text-sky-200 hover:text-white text-xs font-bold transition">#13 배플/인젝터</button>
+                        </div>
+                    </div>
+
+                    <!-- 우측: 선택된 챔버 파츠 상세 브리핑 패널 -->
+                    <div id="chamberDetailPanel" class="lg:col-span-5 bg-slate-50 rounded-2xl p-6 border border-slate-200 space-y-4">
+                        <!-- JS로 초기 렌더링됨 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: 4대 핵심 원소재 한눈에 비교하기 (기초 소재 가이드) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <div class="pb-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <span class="text-xs font-extrabold text-emerald-600 uppercase tracking-wider">STEP 02 · 4대 원소재 핵심 비교</span>
+                        <h3 class="text-xl font-extrabold text-slate-900 mt-0.5">현장에서 다루는 4대 핵심 소재(Si · Quartz · AlN · SiC), 이것만은 절대 기억하세요!</h3>
+                        <p class="text-sm text-slate-600 mt-1">모두 단단해 보이지만 유리처럼 깨지는 <strong>취성(Brittleness)</strong> 소재이며, 소재마다 <strong>절대 금지 수칙</strong>이 다릅니다.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+                    <!-- 1. 실리콘 (Si) -->
+                    <div onclick="openTermModal(1)" class="cursor-pointer group rounded-2xl p-5 bg-gradient-to-b from-slate-50 to-white border-2 border-slate-200 hover:border-blue-500 transition shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-800 text-white text-xs font-extrabold">01. 실리콘 (Si)</span>
+                                <span class="text-xs font-bold text-blue-600 group-hover:translate-x-1 transition">용어 #1 보기 →</span>
+                            </div>
+                            <h4 class="font-extrabold text-base text-slate-900">단결정 / 다결정(폴리) 실리콘</h4>
+                            <p class="text-xs text-slate-500 mt-1">외관: 어두운 은회색 금속 광택</p>
+                            <p class="text-xs text-slate-700 mt-3 leading-relaxed">
+                                주로 <strong>샤워헤드(상부 전극), 포커스링</strong>에 사용. 금속처럼 보이지만 유리처럼 깨지는 <strong>극도의 취성</strong>을 가집니다.
+                            </p>
+                        </div>
+                        <div class="mt-4 p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-800">
+                            <strong class="block text-red-600 mb-0.5"><i class="fa-solid fa-triangle-exclamation mr-1"></i>절대 주의사항</strong>
+                            작은 충격에도 모서리가 깨지므로(치핑) 작업대 위에서 끌거나 부딪히는 행위 절대 금지!
+                        </div>
+                    </div>
+
+                    <!-- 2. 석영 유리 (Quartz) -->
+                    <div onclick="openTermModal(2)" class="cursor-pointer group rounded-2xl p-5 bg-gradient-to-b from-sky-50/50 to-white border-2 border-slate-200 hover:border-sky-500 transition shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-1 rounded-lg bg-sky-600 text-white text-xs font-extrabold">02. 쿼츠 (Quartz)</span>
+                                <span class="text-xs font-bold text-sky-600 group-hover:translate-x-1 transition">용어 #2 보기 →</span>
+                            </div>
+                            <h4 class="font-extrabold text-base text-slate-900">석영 유리 (투명 / 오파크)</h4>
+                            <p class="text-xs text-slate-500 mt-1">외관: 투명 유리 또는 우유빛 불투명</p>
+                            <p class="text-xs text-slate-700 mt-3 leading-relaxed">
+                                <strong>챔버 라이너, 커버링, 배플</strong>에 사용. 유일하게 산소-수소 토치로 녹여 다듬는 <strong>화염연마(불사상)</strong>가 가능한 소재입니다.
+                            </p>
+                        </div>
+                        <div class="mt-4 p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-800">
+                            <strong class="block text-red-600 mb-0.5"><i class="fa-solid fa-hand-sparkles mr-1"></i>절대 주의사항</strong>
+                            맨손 접촉 시 지문 유분이 화염연마 과정에서 하얗게 타는 <strong>백화 불량</strong>을 유발하므로 반드시 장갑 착용!
+                        </div>
+                    </div>
+
+                    <!-- 3. 질화알루미늄 (AlN) -->
+                    <div onclick="openTermModal(3)" class="cursor-pointer group rounded-2xl p-5 bg-gradient-to-b from-emerald-50/50 to-white border-2 border-slate-200 hover:border-emerald-500 transition shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-xs font-extrabold">03. 에이엘엔 (AlN)</span>
+                                <span class="text-xs font-bold text-emerald-600 group-hover:translate-x-1 transition">용어 #3 보기 →</span>
+                            </div>
+                            <h4 class="font-extrabold text-base text-slate-900">질화알루미늄 세라믹</h4>
+                            <p class="text-xs text-slate-500 mt-1">외관: 밝은 회백색 무광 세라믹</p>
+                            <p class="text-xs text-slate-700 mt-3 leading-relaxed">
+                                열전도율과 절연성이 뛰어나 초고가 부품인 <strong>정전척(ESC) / 히터 베이스</strong>에 사용되는 파인세라믹입니다.
+                            </p>
+                        </div>
+                        <div class="mt-4 p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-800">
+                            <strong class="block text-red-600 mb-0.5"><i class="fa-solid fa-droplet-slash mr-1"></i>절대 주의사항</strong>
+                            물(수분)·알칼리와 반응하면 암모니아 냄새가 나며 표면이 부식됨! <strong>일반 물세정 라인 투입 절대 금지!</strong>
+                        </div>
+                    </div>
+
+                    <!-- 4. 탄화규소 (CVD-SiC / RB-SiC) -->
+                    <div onclick="openTermModal(6)" class="cursor-pointer group rounded-2xl p-5 bg-gradient-to-b from-amber-50/50 to-white border-2 border-slate-200 hover:border-amber-500 transition shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-1 rounded-lg bg-amber-600 text-white text-xs font-extrabold">04. 탄화규소 (SiC)</span>
+                                <span class="text-xs font-bold text-amber-600 group-hover:translate-x-1 transition">용어 #5·#6 보기 →</span>
+                            </div>
+                            <h4 class="font-extrabold text-base text-slate-900">CVD-SiC / 반응소결 RB-SiC</h4>
+                            <p class="text-xs text-slate-500 mt-1">외관: 흑회색 초고경도 세라믹</p>
+                            <p class="text-xs text-slate-700 mt-3 leading-relaxed">
+                                다이아몬드 휠 외에는 깎이지 않는 초고경도 소재. 특히 <strong>RB-SiC</strong>는 내부에 잔류 실리콘(Free Si)이 10~20% 존재합니다.
+                            </p>
+                        </div>
+                        <div class="mt-4 p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-800">
+                            <strong class="block text-red-600 mb-0.5"><i class="fa-solid fa-skull-crossbones mr-1"></i>절대 주의사항</strong>
+                            RB-SiC를 강산(불산+질산 혼산) 에칭조에 넣으면 Free Si가 녹아 구멍이 뚫려 <strong>전량 폐기 사고 발생!</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: 8단계 제조 공정 로드맵 (클릭 시 해당 공정 용어로 필터링) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <div class="pb-5 border-b border-slate-100">
+                    <span class="text-xs font-extrabold text-indigo-600 uppercase tracking-wider">STEP 03 · 원소재 입고부터 출하까지</span>
+                    <h3 class="text-xl font-extrabold text-slate-900 mt-0.5">현장 8대 공정 흐름도 (클릭하면 해당 공정 용어를 바로 학습합니다)</h3>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 mt-5">
+                    <div onclick="filterGlossaryByProcess('절단')" class="cursor-pointer p-4 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-400 transition group">
+                        <div class="flex items-center justify-between text-xs font-extrabold text-slate-400 group-hover:text-blue-600">
+                            <span>PROCESS 01</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </div>
+                        <h4 class="font-extrabold text-slate-900 mt-1">잉곳 입고 · 절단 · 코어링</h4>
+                        <p class="text-xs text-slate-600 mt-1">잉곳, 와이어 쏘잉(슬라이싱), 코어링(통빼기), 관통 치핑 관리</p>
+                    </div>
+
+                    <div onclick="filterGlossaryByProcess('MCT')" class="cursor-pointer p-4 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-400 transition group">
+                        <div class="flex items-center justify-between text-xs font-extrabold text-slate-400 group-hover:text-blue-600">
+                            <span>PROCESS 02</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </div>
+                        <h4 class="font-extrabold text-slate-900 mt-1">황삭/정삭 · MCT 정밀연삭</h4>
+                        <p class="text-xs text-slate-600 mt-1">아라시/시아게, MCT, 진공척(버큠), 왁스 본딩, 드레싱/트루잉</p>
+                    </div>
+
+                    <div onclick="filterGlossaryByProcess('홀')" class="cursor-pointer p-4 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-400 transition group">
+                        <div class="flex items-center justify-between text-xs font-extrabold text-slate-400 group-hover:text-blue-600">
+                            <span>PROCESS 03</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </div>
+                        <h4 class="font-extrabold text-slate-900 mt-1">초음파 · 레이저 · PCD 홀가공</h4>
+                        <p class="text-xs text-slate-600 mt-1">초음파(USM), 레이저 타공, PCD 드릴링, 스텝홀(자구리)</p>
+                    </div>
+
+                    <div onclick="filterGlossaryByProcess('사상')" class="cursor-pointer p-4 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-400 transition group">
+                        <div class="flex items-center justify-between text-xs font-extrabold text-slate-400 group-hover:text-blue-600">
+                            <span>PROCESS 04</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </div>
+                        <h4 class="font-extrabold text-slate-900 mt-1">래핑 · 폴리싱 · 화염연마 · 사상</h4>
+                        <p class="text-xs text-slate-600 mt-1">양면 래핑, 경면 폴리싱, 샌드블라스트, 불사상(토치), 면취, 홀사상</p>
+                    </div>
+
+                    <div onclick="filterGlossaryByCategory('에칭·세정')" class="cursor-pointer p-4 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-400 transition group">
+                        <div class="flex items-center justify-between text-xs font-extrabold text-slate-400 group-hover:text-blue-600">
+                            <span>PROCESS 05</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </div>
+                        <h4 class="font-extrabold text-slate-900 mt-1">화공 에칭 · 어닐링(열처리)</h4>
+                        <p class="text-xs text-slate-600 mt-1">홀 에칭, 스트레스(데미지) 에칭, 불산/혼산, 어닐링 응력 제거</p>
+                    </div>
+
+                    <div onclick="filterGlossaryByCategory('에칭·세정')" class="cursor-pointer p-4 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-400 transition group">
+                        <div class="flex items-center justify-between text-xs font-extrabold text-slate-400 group-hover:text-blue-600">
+                            <span>PROCESS 06</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </div>
+                        <h4 class="font-extrabold text-slate-900 mt-1">초순수(DI) 세정 · 에어/열풍 건조</h4>
+                        <p class="text-xs text-slate-600 mt-1">DI 워터 샤워, 초음파 세정, CDA 에어블로우(5cm), 85℃ 열풍건조</p>
+                    </div>
+
+                    <div onclick="filterGlossaryByCategory('측정·공차')" class="cursor-pointer p-4 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-400 transition group">
+                        <div class="flex items-center justify-between text-xs font-extrabold text-slate-400 group-hover:text-blue-600">
+                            <span>PROCESS 07</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </div>
+                        <h4 class="font-extrabold text-slate-900 mt-1">정밀 측정 · 암실 외관검사</h4>
+                        <p class="text-xs text-slate-600 mt-1">CMM 3차원, 비전, 조도계(Ra), 핀게이지, 암실 LED/백열등 검사</p>
+                    </div>
+
+                    <div onclick="filterGlossaryByCategory('불량·안전')" class="cursor-pointer p-4 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-400 transition group">
+                        <div class="flex items-center justify-between text-xs font-extrabold text-slate-400 group-hover:text-blue-600">
+                            <span>PROCESS 08</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </div>
+                        <h4 class="font-extrabold text-slate-900 mt-1">클린룸 와이핑 · 2중 진공포장</h4>
+                        <p class="text-xs text-slate-600 mt-1">알코올 보루 와이핑, 외곽 파지법, 패스박스 양압, 2중 진공실링</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             TAB 2: 66개 현장 용어 도감 (메인 학습 페이지)
+             ========================================== -->
+        <section id="tab-glossary" class="tab-section hidden space-y-6">
+            <!-- 검색 & 다중 필터 컨트롤 바 -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-4 sticky top-[104px] z-30">
+                <div class="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center justify-between">
+                    <!-- 검색창 -->
+                    <div class="relative flex-1">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input id="glossarySearchInput" type="text" oninput="renderGlossaryCards()" placeholder="표준 용어, 영문명, 현장 은어(예: 아라시, 자구리, 에프알, 불사상, 치핑, 보루...) 검색" class="w-full pl-11 pr-10 py-3 rounded-xl bg-slate-50 border border-slate-300 focus:border-blue-600 focus:bg-white focus:outline-none text-sm font-medium">
+                        <button onclick="clearSearch()" id="clearSearchBtn" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                        </button>
+                    </div>
+
+                    <!-- 소재별 필터 & 북마크/미학습 토글 -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <select id="materialFilterSelect" onchange="renderGlossaryCards()" class="px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-xs sm:text-sm font-bold text-slate-700 focus:outline-none focus:border-blue-600">
+                            <option value="ALL">전체 적용 소재</option>
+                            <option value="Si">실리콘 (Si)</option>
+                            <option value="Quartz">석영유리 (Quartz)</option>
+                            <option value="AlN">질화알루미늄 (AlN)</option>
+                            <option value="SiC">탄화규소 (CVD/RB-SiC)</option>
+                            <option value="공통">4대 소재 공통</option>
+                        </select>
+
+                        <select id="statusFilterSelect" onchange="renderGlossaryCards()" class="px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-xs sm:text-sm font-bold text-slate-700 focus:outline-none focus:border-blue-600">
+                            <option value="ALL">전체 학습 상태</option>
+                            <option value="UNLEARNED">미학습 용어만 보기</option>
+                            <option value="LEARNED">학습 완료만 보기</option>
+                            <option value="BOOKMARKED">⭐ 중요 별표만 보기</option>
+                        </select>
+
+                        <button onclick="markVisibleLearned()" class="px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-check-double"></i>
+                            <span>현재 목록 일괄 학습완료</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 6대 카테고리 탭 필터 -->
+                <div class="flex items-center gap-1.5 overflow-x-auto pb-1" id="categoryFilterBar">
+                    <!-- JS로 렌더링됨 -->
+                </div>
+            </div>
+
+            <!-- 결과 카운트 및 안내 -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
+                <div class="text-sm font-bold text-slate-700">
+                    검색 결과: 총 <span id="filteredTermCount" class="text-blue-600 font-extrabold">66</span>개 현장 용어
+                </div>
+                <div class="text-xs text-slate-500 flex items-center gap-3">
+                    <span><i class="fa-solid fa-circle-info text-blue-500 mr-1"></i>카드를 클릭하면 <strong>시각 도해(SVG) + 선임과의 실전 대화 예시</strong>가 열립니다.</span>
+                </div>
+            </div>
+
+            <!-- 66개 용어 카드 그리드 -->
+            <div id="glossaryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- JS로 렌더링됨 -->
+            </div>
+        </section>
+
+        <!-- ==========================================
+             TAB 3: 현장 은어 ↔ 표준 용어 빠른 번역기
+             ========================================== -->
+        <section id="tab-slang" class="tab-section hidden space-y-6">
+            <div class="bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl p-6 text-white shadow-md">
+                <div class="max-w-3xl space-y-2">
+                    <span class="px-2.5 py-1 rounded-full bg-black/20 text-xs font-extrabold uppercase">현장 소통 119 · 은어-표준어 대조표</span>
+                    <h2 class="text-2xl font-extrabold">선임 작업자의 현장 은어, 당황하지 말고 바로 찾아보세요!</h2>
+                    <p class="text-sm text-amber-50 leading-relaxed">
+                        현장에서는 일본어 잔재 은어(아라시, 시아게, 자구리, 노기스, 기스, 보루)나 영문 약칭(에프알, 이에스씨, 씨라이너, 버큠, 폴리)이 자주 쓰입니다.
+                        신입사원은 <strong>현장 호칭을 알아듣되, 보고서·성적서·SOP에는 반드시 표준 용어를 사용</strong>해야 합니다.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 은어 검색 필터 -->
+            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-3 items-center justify-between">
+                <div class="relative w-full sm:w-96">
+                    <i class="fa-solid fa-ear-listen absolute left-4 top-1/2 -translate-y-1/2 text-amber-500"></i>
+                    <input id="slangSearchInput" type="text" oninput="renderSlangTable()" placeholder="현장에서 들은 말 입력 (예: 아라시, 통빼기, 불사상, 노기스...)" class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 focus:border-amber-500 focus:bg-white focus:outline-none text-sm font-medium">
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                    <button onclick="quickSlangSearch('아라시')" class="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold">#아라시</button>
+                    <button onclick="quickSlangSearch('시아게')" class="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold">#시아게</button>
+                    <button onclick="quickSlangSearch('자구리')" class="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold">#자구리</button>
+                    <button onclick="quickSlangSearch('불사상')" class="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold">#불사상</button>
+                    <button onclick="quickSlangSearch('통빼기')" class="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold">#통빼기</button>
+                    <button onclick="quickSlangSearch('노기스')" class="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold">#노기스</button>
+                    <button onclick="quickSlangSearch('보루')" class="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold">#보루</button>
+                    <button onclick="quickSlangSearch('')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold">전체 초기화</button>
+                </div>
+            </div>
+
+            <!-- 은어 ↔ 표준 용어 테이블 -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-900 text-white text-xs uppercase">
+                                <th class="py-3.5 px-4 font-bold w-16">No</th>
+                                <th class="py-3.5 px-4 font-bold w-1/4">🗣️ 현장 호칭 / 은어 (작업자 표현)</th>
+                                <th class="py-3.5 px-4 font-bold w-1/4">📘 표준 용어 (도면·SOP·성적서 표기)</th>
+                                <th class="py-3.5 px-4 font-bold">💡 신입사원용 한줄 핵심 뜻 & 주의점</th>
+                                <th class="py-3.5 px-4 font-bold w-24 text-center">상세</th>
+                            </tr>
+                        </thead>
+                        <tbody id="slangTableBody" class="divide-y divide-slate-200 text-sm">
+                            <!-- JS로 렌더링됨 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             TAB 4: 3분 마이크로러닝 플래시카드
+             ========================================== -->
+        <section id="tab-flashcard" class="tab-section hidden space-y-6">
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-slate-100">
+                    <div>
+                        <span class="text-xs font-extrabold text-blue-600 uppercase tracking-wider">MICRO-LEARNING FLASHCARDS</span>
+                        <h2 class="text-xl font-extrabold text-slate-900 mt-0.5">하루 5분! 카드를 뒤집으며 66개 현장 용어를 마스터하세요</h2>
+                        <p class="text-sm text-slate-600 mt-1">카드를 클릭(또는 스페이스바)하면 뒷면의 <strong>핵심 정의와 절대 안전 수칙</strong>이 나타납니다.</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <select id="fcCategorySelect" onchange="initFlashcards()" class="px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-xs sm:text-sm font-bold text-slate-700">
+                            <option value="ALL">전체 66개 용어</option>
+                            <option value="소재">Ⅰ. 소재 (6)</option>
+                            <option value="제품">Ⅱ. 제품 파츠 (7)</option>
+                            <option value="소재가공">Ⅲ. 소재가공 (19)</option>
+                            <option value="에칭·세정">Ⅳ. 에칭·세정·포장 (12)</option>
+                            <option value="측정·공차">Ⅴ. 측정·공차 (12)</option>
+                            <option value="불량·안전">Ⅵ. 불량·안전·보전 (10)</option>
+                            <option value="UNLEARNED">미학습 용어만 집중 학습</option>
+                        </select>
+                        <button onclick="shuffleFlashcards()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-bold transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-shuffle"></i> 순서 섞기
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 플래시카드 컨테이너 -->
+                <div class="max-w-2xl mx-auto my-8">
+                    <div class="flex items-center justify-between text-xs font-bold text-slate-500 mb-3 px-1">
+                        <span id="fcIndexLabel">카드 1 / 66</span>
+                        <span id="fcLearnedBadge" class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">미학습</span>
+                    </div>
+
+                    <!-- 3D Flip Card -->
+                    <div onclick="flipFlashcard()" class="perspective-1000 w-full h-80 sm:h-96 cursor-pointer select-none">
+                        <div id="fcCardInner" class="transform-style-3d relative w-full h-full">
+                            <!-- 앞면 -->
+                            <div class="backface-hidden absolute inset-0 rounded-3xl bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white p-8 flex flex-col justify-between shadow-xl border border-blue-500/30">
+                                <div class="flex items-center justify-between">
+                                    <span id="fcFrontCategory" class="px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold">카테고리</span>
+                                    <span class="text-xs text-slate-400"><i class="fa-solid fa-rotate mr-1"></i>클릭하여 뒤집기</span>
+                                </div>
+                                <div class="text-center space-y-3 my-auto">
+                                    <div id="fcFrontNo" class="text-xs font-extrabold text-amber-400 tracking-widest">TERM #01</div>
+                                    <h3 id="fcFrontTitle" class="text-2xl sm:text-3xl font-extrabold leading-tight">단결정 / 다결정 실리콘</h3>
+                                    <p id="fcFrontEng" class="text-sm sm:text-base text-slate-300 font-medium">(Single / Poly-Si)</p>
+                                    <div class="pt-3">
+                                        <span class="inline-block px-4 py-1.5 rounded-xl bg-amber-400/15 border border-amber-400/30 text-amber-300 text-xs sm:text-sm font-bold">
+                                            🗣️ 현장 호칭: <span id="fcFrontSlang">단결정, 폴리(Poly), 실리콘 모재</span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between text-xs text-slate-400 border-t border-slate-800 pt-3">
+                                    <span id="fcFrontProcess">적용: Si 전공정 (절단~세정)</span>
+                                    <span class="text-blue-300 font-semibold">뜻 & 주의사항 확인 →</span>
+                                </div>
+                            </div>
+
+                            <!-- 뒷면 -->
+                            <div class="backface-hidden rotate-y-180 absolute inset-0 rounded-3xl bg-white text-slate-900 p-6 sm:p-8 flex flex-col justify-between shadow-xl border-2 border-blue-600">
+                                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                                    <span id="fcBackTitle" class="font-extrabold text-base text-blue-700">단결정 / 다결정 실리콘</span>
+                                    <span class="text-xs text-slate-400"><i class="fa-solid fa-rotate mr-1"></i>앞면으로</span>
+                                </div>
+                                <div class="space-y-4 my-auto overflow-y-auto py-2">
+                                    <div class="p-3.5 rounded-2xl bg-blue-50/70 border border-blue-100">
+                                        <div class="text-xs font-extrabold text-blue-700 mb-1"><i class="fa-solid fa-book-open mr-1"></i>작업자용 핵심 정의</div>
+                                        <p id="fcBackDef" class="text-sm text-slate-800 leading-relaxed font-medium"></p>
+                                    </div>
+                                    <div class="p-3.5 rounded-2xl bg-red-50 border border-red-200">
+                                        <div class="text-xs font-extrabold text-red-600 mb-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i>현장 작업 시 절대 주의사항 (불량·안전)</div>
+                                        <p id="fcBackCaution" class="text-sm text-red-900 leading-relaxed font-medium"></p>
+                                    </div>
+                                </div>
+                                <div class="text-xs text-slate-500 text-center pt-2 border-t border-slate-100">
+                                    아래 버튼으로 학습 완료 여부를 체크하세요
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 플래시카드 조작 버튼 -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 mt-6">
+                        <button onclick="prevFlashcard()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm flex items-center gap-2 transition">
+                            <i class="fa-solid fa-chevron-left"></i> 이전
+                        </button>
+
+                        <div class="flex items-center gap-2">
+                            <button onclick="markCurrentFlashcard(false)" class="px-4 py-2.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold text-sm flex items-center gap-1.5 transition">
+                                <i class="fa-solid fa-rotate-left"></i> 복습 필요
+                            </button>
+                            <button onclick="markCurrentFlashcard(true)" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm flex items-center gap-1.5 shadow-md shadow-emerald-600/20 transition">
+                                <i class="fa-solid fa-check"></i> 외웠음 (학습완료 + 다음)
+                            </button>
+                        </div>
+
+                        <button onclick="nextFlashcard()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm flex items-center gap-2 transition">
+                            다음 <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             TAB 5: 실전 안전·용어 퀴즈 & 수료증 발급
+             ========================================== -->
+        <section id="tab-quiz" class="tab-section hidden space-y-6">
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-slate-100">
+                    <div>
+                        <span class="text-xs font-extrabold text-indigo-600 uppercase tracking-wider">FIELD COMPETENCY ASSESSMENT</span>
+                        <h2 class="text-xl font-extrabold text-slate-900 mt-0.5">신규 현장 작업자 직무·안전 용어 평가 (수료 기준: 80점 이상)</h2>
+                        <p class="text-sm text-slate-600 mt-1">현장 은어 매칭, 소재별 금지 공정, 불량 예방 주의사항을 실전 시나리오 문제로 점검합니다.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="startNewQuiz(10)" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-bold transition">
+                            10문항 평가 시작
+                        </button>
+                        <button onclick="startNewQuiz(20)" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs sm:text-sm font-bold transition">
+                            20문항 종합 평가
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 퀴즈 진행 영역 -->
+                <div id="quizActiveContainer" class="max-w-3xl mx-auto py-6 space-y-6">
+                    <!-- JS로 렌더링됨 -->
+                </div>
+
+                <!-- 퀴즈 결과 & 수료증 영역 -->
+                <div id="quizResultContainer" class="hidden max-w-3xl mx-auto py-6 space-y-6">
+                    <!-- JS로 렌더링됨 -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             TAB 6: 기업 교육용 사이트 벤치마킹 & 교안 설계 원칙
+             ========================================== -->
+        <section id="tab-benchmark" class="tab-section hidden space-y-6">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+                <div class="border-b border-slate-100 pb-5">
+                    <span class="text-xs font-extrabold text-blue-600 uppercase tracking-wider">CORPORATE E-LEARNING UX RESEARCH & DESIGN SYSTEM</span>
+                    <h2 class="text-2xl font-extrabold text-slate-900 mt-1">기업 현장 작업자용 웹 교육 플랫폼 조사 및 본 교안 적용 설계서</h2>
+                    <p class="text-sm text-slate-600 mt-1">
+                        국내외 제조·반도체 선도 기업(삼성전자 반도체 아카데미, SK하이닉스 SKHU, 현대차그룹 기술교육원, 글로벌 마이크로러닝 플랫폼 Docebo·TalentLMS·유밥)의 현장 직무교육 UI/UX 모범 사례를 분석하여 기초 지식이 없는 신규 입사자 맞춤형으로 구현했습니다.
+                    </p>
+                </div>
+
+                <!-- 4대 핵심 벤치마킹 인사이트 카드 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                        <div class="flex items-center gap-2 text-blue-700 font-extrabold text-base">
+                            <i class="fa-solid fa-layer-group"></i>
+                            <span>1. 맥락 중심 시각적 온보딩 (Contextual Visual Onboarding)</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                            <strong>[기업 교육 조사 결과]</strong> 기초 지식이 없는 신입 작업자에게 가나다순 단어장만 배포하면 70% 이상이 10분 내 이탈합니다. 우수 제조 기업은 반드시 <strong>“전체 장비(챔버) 단면도”</strong>와 <strong>“공정 흐름도(Process Map)”</strong>를 먼저 제시하여 내가 만지는 부품의 위치를 각인시킵니다.<br>
+                            <span class="text-blue-600 font-bold">→ 적용: [1. 왕초보 입문 가이드] 탭에 인터랙티브 챔버 SVG 단면도 및 8대 공정 로드맵 구현.</span>
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                        <div class="flex items-center gap-2 text-amber-700 font-extrabold text-base">
+                            <i class="fa-solid fa-comments"></i>
+                            <span>2. 현장 은어 ↔ 표준 도면 용어 이중 매핑 (Dual-Language Bridging)</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                            <strong>[기업 교육 조사 결과]</strong> 신규 입사자의 가장 큰 고충은 작업표준서(SOP)의 용어(예: 황삭, 스텝홀, 화염연마)와 현장 베테랑의 구두 지시어(예: 아라시, 자구리, 불사상)가 다른 점입니다. 현장에서 들리는 발음 그대로 검색해도 표준 용어와 연결되는 <strong>양방향 번역 사전</strong>이 필수적입니다.<br>
+                            <span class="text-amber-700 font-bold">→ 적용: 66개 전 항목에 [현장 호칭/은어] 배지 부여 및 [3. 현장 은어 번역기] 전용 탭 탑재.</span>
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                        <div class="flex items-center gap-2 text-red-600 font-extrabold text-base">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span>3. 불량·안전 Red-Line 경고 우선 배치 (Zero-Defect & Safety First)</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                            <strong>[기업 교육 조사 결과]</strong> 반도체·파인세라믹 파츠는 단 한 번의 실수(예: RB-SiC 혼산 오투입, AlN 물세정 부식, 진공척 슬러지 미제거 파손, 쿼츠 맨손 지문 백화)가 수백만~수천만 원의 스크랩(폐기) 사고로 이어집니다. 단순 정의보다 <strong>“왜 불량이 나는가 / 무엇을 절대 하면 안 되는가”</strong>를 붉은색 경고 박스로 분리해야 합니다.<br>
+                            <span class="text-red-600 font-bold">→ 적용: 모든 용어 카드 하단에 [🚨 현장 작업 시 절대 주의사항] Red Box 및 실전 대화 예시 배치.</span>
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                        <div class="flex items-center gap-2 text-emerald-700 font-extrabold text-base">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                            <span>4. 마이크로러닝 & 게이미피케이션 (3~5분 단위 반복 학습·인증)</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                            <strong>[기업 교육 조사 결과]</strong> 현장 작업자는 PC 앞에 오래 앉아 있기 어렵고, 휴게실이나 작업 대기 중 스마트폰·태블릿으로 3~5분씩 끊어 학습(Micro-learning)할 때 학습 완주율이 3.2배 높아집니다. 또한 진도율 게이지와 퀴즈 수료증이 학습 동기를 부여합니다.<br>
+                            <span class="text-emerald-700 font-bold">→ 적용: 모바일 반응형 UI, 3D 플래시카드, 실시간 진도율 저장(LocalStorage), 80점 수료증 인쇄 기능 구현.</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 66개 현장 용어 카테고리별 구성 현황표 -->
+                <div class="pt-4">
+                    <h3 class="text-lg font-extrabold text-slate-900 mb-3">첨부 교안 시트 66개 현장 용어집 전체 구성 체계 (카테고리 Ⅰ~Ⅵ)</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                        <div class="p-4 rounded-xl bg-blue-50/60 border border-blue-200">
+                            <div class="font-extrabold text-blue-800 text-sm mb-1">Ⅰ. 소재 (No.1 ~ 6, 6개)</div>
+                            <p class="text-slate-600">단결정/다결정 실리콘(Si), 석영유리(Quartz), 질화알루미늄(AlN), 알루미나(Al₂O₃), CVD-SiC, 반응소결 RB-SiC</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-indigo-50/60 border border-indigo-200">
+                            <div class="font-extrabold text-indigo-800 text-sm mb-1">Ⅱ. 제품 파츠 (No.7 ~ 13, 7개)</div>
+                            <p class="text-slate-600">샤워헤드/상부전극, 곡면전극, 포커스링(FR), 커버링/에지링, 챔버라이너(C-Liner), 정전척(ESC)/히터, 배플/인젝터</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-amber-50/60 border border-amber-200">
+                            <div class="font-extrabold text-amber-800 text-sm mb-1">Ⅲ. 소재가공 (No.14 ~ 32, 19개)</div>
+                            <p class="text-slate-600">잉곳, 와이어쏘잉, 코어링, 황삭/정삭, MCT, 초음파(USM), 레이저/PCD 드릴링, 스텝홀, 드레싱, 왁스본딩, 진공척, 래핑, 폴리싱, 샌드블라스트, 화염연마, 사상, 면취, 홀사상</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-teal-50/60 border border-teal-200">
+                            <div class="font-extrabold text-teal-800 text-sm mb-1">Ⅳ. 화공 에칭·정밀 세정 (No.33 ~ 44, 12개)</div>
+                            <p class="text-slate-600">홀 에칭, 스트레스(데미지) 에칭, 불산/혼산, 어닐링, 초순수(DI) 샤워, 초음파/메가소닉 세정, 에어블로우, 열풍건조, 알코올 와이핑, 클린룸/패스박스, 표준 파지법, 2중 진공포장</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-purple-50/60 border border-purple-200">
+                            <div class="font-extrabold text-purple-800 text-sm mb-1">Ⅴ. 측정·기하 공차 (No.45 ~ 56, 12개)</div>
+                            <p class="text-slate-600">버니어/마이크로미터, 핀게이지, 3차원측정기(CMM)/비전, 조도계(Ra), 투영기, 암실 외관검사, 평탄도/평행도, 진원도, 동심도/위치도, 직각도, 곡률반경(R)/C면, 치수공차/가공여유</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-rose-50/60 border border-rose-200">
+                            <div class="font-extrabold text-rose-800 text-sm mb-1">Ⅵ. 불량·안전·보전 (No.57 ~ 66, 10개)</div>
+                            <p class="text-slate-600">치핑, 크랙/데미지층, 스크래치(혜성), 툴마크/단차, 보우/워프/롤오프, 버닝/리캐스트/백화, 워터마크/파티클, 홀 미관통/미에칭, 로트추적/SOP, 설비보전(PM/BM)·안전보호구</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==========================================
+         용어 상세 모달 (시각 도해 SVG + 선임-신입 실전 대화 + TTS 발음)
+         ========================================== -->
+    <div id="termDetailModal" class="fixed inset-0 z-50 hidden bg-slate-900/75 backdrop-blur-sm flex items-center justify-center p-4 no-print" onclick="closeModalOnBackdrop(event)">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 p-6 sm:p-8 space-y-5 relative">
+            <!-- 닫기 버튼 -->
+            <button onclick="closeTermModal()" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center absolute top-5 right-5 transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div id="modalContentArea" class="space-y-5">
+                <!-- JS로 동적 렌더링 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 토스트 알림창 (alert 대체) -->
+    <div id="toastMessage" class="fixed bottom-6 right-6 z-50 hidden px-5 py-3.5 rounded-2xl bg-slate-900 text-white text-sm font-bold shadow-2xl border border-slate-700 flex items-center gap-2.5 transition-all">
+        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toastText">알림 메시지</span>
+    </div>
+
+    <!-- 푸터 -->
+    <footer class="bg-white border-t border-slate-200 py-5 mt-12 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2">
+            <div>
+                <strong>현장 작업자 필수 용어집 66선 스마트 온보딩 아카데미</strong> · 기초 지식이 없는 신규 입사자를 위한 직무·안전 표준 교안
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="resetAllProgress()" class="text-slate-400 hover:text-red-600 underline">학습 진도 초기화</button>
+                <span>웹 배포형 Single-File HTML5</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==========================================
+         데이터베이스 (교안 66개 현장 용어집 전수 수록) 및 애플리케이션 로직
+         ========================================== -->
+    <script>
+        // 66개 현장 용어집 마스터 데이터 (교안_교육교안_현장용어.csv / 교안_시트1.csv 전수 반영)
+        let GLOSSARY_DATA = [
+            // ==================== Ⅰ. 소재 (No. 1 ~ 6) ====================
+            {
+                no: 1,
+                category: "소재",
+                termKo: "단결정 / 다결정 실리콘",
+                termEn: "(Single / Poly-Si)",
+                slang: "단결정, 폴리(Poly), 실리콘 모재",
+                definition: "고순도 규소(Si)를 녹여 기둥 형태로 기른 원소재. 결정 방향이 하나면 단결정(무결점·균일 식각 유리), 여러 개가 뭉쳐 있으면 다결정(폴리)이라 부름.",
+                process: "Si 전공정 (절단~세정)",
+                caution: "금속보다 단단하지만 유리처럼 깨지는 취성(Brittleness)이 극도로 높음. 작은 충격에도 모서리가 깨지므로(Chipping) 작업대 위에서 끌거나 부딪히는 행위 절대 금지.",
+                dialogue: "선임: \"이번 샤워헤드는 단결정 실리콘 모재니까 작업대 올릴 때 절대 끌지 말고 수직으로 살포시 내려놔!\""
+            },
+            {
+                no: 2,
+                category: "소재",
+                termKo: "석영 유리",
+                termEn: "(Quartz Glass)",
+                slang: "쿼츠, 투명 쿼츠, 오파크(Opaque/불투명)",
+                definition: "고순도 이산화규소(SiO₂)로 만든 유리질 소재. 빛이 투과되는 투명 쿼츠와 미세 기포를 넣어 열을 차단하는 불투명(Opaque) 쿼츠로 구분됨.",
+                process: "Quartz 전공정 (연삭·화염연마·세정)",
+                caution: "투명한 소재 특성상 내부 미세 크랙이나 기포(Bubble), 스크래치가 육안으로 즉시 드러남. 맨손 접촉 시 지문 유분이 화염연마 과정에서 백화(하얗게 타는 현상)를 유발하므로 반드시 장갑 착용.",
+                dialogue: "선임: \"투명 쿼츠 라이너 불사상(화염연마) 들어가기 전에 맨손으로 절대 만지지 마! 지문 묻으면 그 자리 하얗게 백화 난다.\""
+            },
+            {
+                no: 3,
+                category: "소재",
+                termKo: "질화알루미늄",
+                termEn: "(Aluminum Nitride, AlN)",
+                slang: "에이엘엔, 알루미늄 나이트라이드",
+                definition: "열전도율이 매우 높고 전기 절연성이 뛰어난 회백색 파인세라믹 소재. 주로 열을 발산하거나 정전기로 웨이퍼를 잡아주는 파츠(정전척/히터)에 사용됨.",
+                process: "AlN 가공 및 전용 세정",
+                caution: "물(수분) 및 알칼리성 용액과 반응하면 가수분해되어 암모니아 냄새가 나며 표면이 부식(산화)됨. 가공 후 습기에 방치하지 말고, 일반 물세정 라인에 임의 투입 절대 금지.",
+                dialogue: "선임: \"이 회백색 파츠는 에이엘엔(AlN)이야! 물에 닿으면 암모니아 냄새 나면서 표면 다 썩으니까 일반 DI 물세정조에 넣으면 큰일 난다!\""
+            },
+            {
+                no: 4,
+                category: "소재",
+                termKo: "알루미나 / 파인세라믹",
+                termEn: "(Alumina / Fine Ceramics, Al₂O₃)",
+                slang: "알루미나, 세라믹 소지, 순알루미나",
+                definition: "고순도 산화알루미늄(Al₂O₃) 분말을 성형·소결하여 만든 가장 대중적인 어드밴스드 세라믹 소재. 우수한 전기 절연성, 내열성, 내마모성, 내화학성을 지님.",
+                process: "챔버 절연물·튜브·지그·웨이퍼 암 (절단·연삭·MCT 가공)",
+                caution: "금속보다 가볍고 단단하나 충격에 취약한 전형적인 취성 소재임. 가공 시 칩핑(Chipping)이나 미세 크랙이 발생하기 쉬우며, 다이아몬드 전용 공구와 적절한 절삭유 공급이 필수적임.",
+                dialogue: "선임: \"알루미나 세라믹은 다이아몬드 휠 아니면 안 깎여. 절삭유 노즐이 가공 부위에 정확히 쏘는지 먼저 확인해.\""
+            },
+            {
+                no: 5,
+                category: "소재",
+                termKo: "화학 기상 증착 탄화규소",
+                termEn: "(Chemical Vapor Deposition SiC, CVD-SiC)",
+                slang: "씨브디(CVD-SiC), 씨브디 실리콘카바이드",
+                definition: "고순도 가스를 반응시켜 흑연(Graphite) 모재나 맨드렐 위에 탄화규소 결정립을 치밀하게 적층(증착)하여 만든 초고순도·고밀도(기공률 0%) 파인세라믹 소재.",
+                process: "포커스링·엣지링 (절단·연삭·MCT·사상)",
+                caution: "반응소결(RB-SiC)과 달리 내부에 자유 실리콘(Free Si)이 없어 플라즈마 내식성이 극도로 우수하나, 소재 가격이 매우 비쌈. 고경도·취성 소재이므로 가공 시 엣지 치핑이나 미세 크랙 발생에 각별히 주의.",
+                dialogue: "선임: \"이 포커스링은 씨브디(CVD-SiC)라 원소재 값만 수백만 원이야. 코너 엣지 치핑 안 나게 절입량 천천히 들어가!\""
+            },
+            {
+                no: 6,
+                category: "소재",
+                termKo: "반응소결 탄화규소",
+                termEn: "(Reaction-Bonded SiC, RB-SiC)",
+                slang: "알비(RB), 알비실리콘카바이드",
+                definition: "다공성 탄소(C) 성형체에 용융 실리콘(Si)을 침투시켜 만든 고강도 세라믹. 내부에 반응하지 않고 남은 잔류 실리콘(Free Si)이 약 10~20% 존재함.",
+                process: "RB-SiC 절단·연삭·래핑",
+                caution: "다이아몬드 휠 외에는 깎이지 않는 고경도 소재. 특히 내부의 Free Si가 강산(불산+질산 혼산)에 닿으면 녹아 빠져나가 구멍(Pore)이 뚫리므로, Si 에칭조에 넣으면 전량 폐기 사고로 이어짐.",
+                dialogue: "선임: \"절대 주의해! 알비(RB-SiC) 파츠를 실리콘 혼산 에칭조에 넣으면 안에 있는 Free Si가 다 녹아서 구멍 숭숭 뚫려 전량 폐기야!\""
+            },
+
+            // ==================== Ⅱ. 제품 (No. 7 ~ 13) ====================
+            {
+                no: 7,
+                category: "제품",
+                termKo: "샤워헤드 / 상부 전극",
+                termEn: "(Shower Head / Upper Electrode)",
+                slang: "일렉트로드(Electrode), 캐소드(Cathode), 샤워헤드",
+                definition: "식각 챔버 상단에 장착되어 플라즈마를 형성하고, 수백~수천 개의 미세홀을 통해 반응 가스를 웨이퍼 위에 균일하게 분사하는 핵심 소모성 파츠.",
+                process: "Si, SiC (홀 가공·에칭·세정)",
+                caution: "홀 내부의 미세 크랙이나 미관통, 파티클 잔류가 최대 불량 요인. 홀 사상 및 세정 후 암실 검사에서 홀 내부 이물을 완벽히 제거해야 함.",
+                dialogue: "선임: \"일렉트로드(샤워헤드)는 구멍이 수천 개야. 한 구멍이라도 막히거나 안에 슬러지 남으면 웨이퍼 불량 나니까 암실 백열등으로 홀 하나하나 다 비춰봐.\""
+            },
+            {
+                no: 8,
+                category: "제품",
+                termKo: "곡면 전극",
+                termEn: "(Curved Electrode / Concave/Convex)",
+                slang: "곡면 전극, R 전극, 볼록/오목 전극",
+                definition: "플라즈마 방전 밀도와 가스 분산 효율을 제어하기 위해 표면이 오목(Concave)하거나 볼록(Convex)한 3차원 곡면 형상으로 가공된 상·하부 전극 파츠.",
+                process: "Si, CVD-SiC (3차원 MCT 연삭·폴리싱)",
+                caution: "곡면부의 곡률 반경(Radius)과 형상 공차가 조금만 틀어져도 챔버 내 플라즈마 아크 특성이 왜곡됨. 3차원 가공 및 사상 시 툴 자국(Tool Mark)이나 국부적인 단차가 생기지 않도록 정밀 블렌딩 필수.",
+                dialogue: "선임: \"R 전극은 바닥이 평평하지 않고 오목한 곡면이라 사상할 때 한 곳만 세게 문지르면 단차 생겨. 회전 턴테이블 위에서 균일하게 다듬어.\""
+            },
+            {
+                no: 9,
+                category: "제품",
+                termKo: "포커스링",
+                termEn: "(Focus Ring)",
+                slang: "에프알(FR), 포커스링, 이너링(Inner Ring)",
+                definition: "웨이퍼 가장자리를 감싸는 링 형태의 파츠. 플라즈마를 웨이퍼 중앙과 외곽에 균일하게 집중시켜 식각 수율을 결정함.",
+                process: "Si, Quartz, SiC (내외경 연삭·단차 가공)",
+                caution: "웨이퍼가 안착되는 단차(Step/포켓) 부위의 평탄도와 치수 공차가 수 마이크로미터(㎛) 단위로 매우 엄격함. 단차 코너 부위 R값 및 치핑 관리 필수.",
+                dialogue: "선임: \"에프알(FR) 안쪽 단차 포켓은 웨이퍼가 바로 올라가는 자리야. 단차 코너에 미세 치핑 하나만 있어도 불량이니까 현미경으로 꼭 확인해.\""
+            },
+            {
+                no: 10,
+                category: "제품",
+                termKo: "커버링 / 에지링",
+                termEn: "(Cover Ring / Edge Ring)",
+                slang: "커버링, 아우터링(Outer Ring)",
+                definition: "포커스링의 바깥쪽이나 하부를 감싸 플라즈마 식각 가스로부터 하부 구조물(정전척 등)을 보호하는 소모성 링 파츠.",
+                process: "Quartz, Si (코어링·MCT·폴리싱)",
+                caution: "대구경 링 형태라 두께가 얇아지면 가공 중 탄성 변형(휨)이나 파손 위험이 큼. 진공척이나 왁스 마운팅 시 밀착 불량이 없는지 반드시 확인.",
+                dialogue: "선임: \"아우터링(커버링)은 지름은 큰데 살이 얇아서 조금만 비틀어 잡으면 쩍 갈라져. 양손으로 대칭되게 받쳐서 이동해.\""
+            },
+            {
+                no: 11,
+                category: "제품",
+                termKo: "챔버 라이너",
+                termEn: "(Chamber Liner)",
+                slang: "씨라이너(C-Liner), 쿼츠 라이너, 실린더",
+                definition: "챔버 내벽이 플라즈마에 부식되는 것을 막기 위해 챔버 안쪽 벽면에 끼우는 원통형(실린더형) 보호 파츠.",
+                process: "Quartz, Si (원통 연삭·슬롯 가공)",
+                caution: "원통 높이가 높고 벽 두께가 얇아 내·외경 동심도 및 진원도 관리가 핵심. 슬롯(구멍) 가공 부위에서 크랙이 타고 들어가기 쉬우므로 절삭 부하 제어 필수.",
+                dialogue: "선임: \"씨라이너 옆면 슬롯 구멍 뚫을 때 부하 많이 걸리면 원통 벽 타고 크랙 쫙 간다. 절삭유 충분히 쏘면서 천천히 가공해.\""
+            },
+            {
+                no: 12,
+                category: "제품",
+                termKo: "정전척 / 히터 베이스",
+                termEn: "(ESC / Ceramic Heater)",
+                slang: "이에스씨(ESC), 척 베이스, 히터",
+                definition: "챔버 하부에서 정전기 힘으로 웨이퍼를 고정하고(ESC), 온도를 정밀하게 제어(Heater)하는 고부가가치 세라믹 부품.",
+                process: "AlN (초정밀 평면연삭·홀 가공)",
+                caution: "상면의 극초정밀 평탄도와 냉각 가스 홀, 리프트 핀 홀의 위치도가 핵심. 원소재 단가가 매우 높으므로 셋업 미스로 인한 스크랩(폐기) 발생 시 손실이 막대함.",
+                dialogue: "선임: \"이에스씨(ESC) 베이스는 영점 셋업 한 번 잘못하면 수천만 원 날아간다. 가공 전에 드라이런(공회전)으로 좌표 두 번, 세 번 검증해!\""
+            },
+            {
+                no: 13,
+                category: "제품",
+                termKo: "배플 / 인젝터",
+                termEn: "(Baffle / Gas Injector)",
+                slang: "배플판, 가스 분배판, 인젝터",
+                definition: "챔버 내부의 가스 흐름(배기 유속)을 균일하게 조절하는 다공판(배플)과 중심부에서 가스를 쏘아주는 노즐 부품(인젝터).",
+                process: "Quartz, Si, AlN (MCT·초음파·홀 가공)",
+                caution: "슬롯(길쭉한 구멍)이나 경사홀이 많아 얇은 격벽(살두께)이 부러지기 쉬움. 가공 및 세정 시 수압이나 에어건 압력에 의해 격벽이 파손되지 않도록 주의.",
+                dialogue: "선임: \"배플판은 구멍 사이 살두께(격벽)가 종잇장처럼 얇아. 에어건 너무 가까이서 세게 쏘면 격벽 부러지니까 5cm 거리 꼭 지켜!\""
+            },
+
+            // ==================== Ⅲ. 소재가공 (No. 14 ~ 32) ====================
+            {
+                no: 14,
+                category: "소재가공",
+                termKo: "잉곳 / 블랭크 블록",
+                termEn: "(Ingot / Blank Block)",
+                slang: "잉곳, 통소재, 원통 모재",
+                definition: "가공하기 전 입고된 원기둥 또는 사각 기둥 형태의 원소재 덩어리.",
+                process: "4대 소재 공통 (수입검사·절단)",
+                caution: "고가의 원소재이므로 이동 시 대차 및 크레인 결속 상태를 철저히 확인. 절단 전 잉곳 외주면의 오리엔테이션 플랫(결정 방향 표시 홈)이나 로트 번호를 반드시 대조.",
+                dialogue: "선임: \"잉곳 와이어 쏘에 걸기 전에 작업지시서 로트 번호랑 잉곳 옆면 마킹 번호가 일치하는지 무조건 먼저 확인해!\""
+            },
+            {
+                no: 15,
+                category: "소재가공",
+                termKo: "와이어 쏘잉",
+                termEn: "(Multi-Wire Sawing)",
+                slang: "와이어 쏘, 슬라이싱(Slicing), 판재 절단",
+                definition: "다이아몬드 입자가 붙은 가늘고 긴 강선(와이어)을 고속으로 왕복 주행시켜 잉곳을 둥근 원판(Wafer/Plate) 형태로 여러 장 동시에 자르는 공정.",
+                process: "Si, Quartz, RB-SiC (절단 공정)",
+                caution: "와이어 장력이나 절삭유 공급이 불안정하면 절단면에 물결무늬(쏘 마크, Saw Mark)가 남거나 판재가 휘어지는 보우(Bow)/워프(Warp) 불량이 발생함.",
+                dialogue: "선임: \"슬라이싱 끝난 원판 보우(휨) 값 찍어봐. 와이어 장력 흔들려서 쏘 마크 깊게 나면 다음 연삭에서 못 살린다.\""
+            },
+            {
+                no: 16,
+                category: "소재가공",
+                termKo: "코어링",
+                termEn: "(Coring / Trepanning)",
+                slang: "코어 작업, 통빼기, 내외경 발취",
+                definition: "원통형 다이아몬드 코어 드릴을 회전시켜 판재나 블록에서 링(Ring) 모양을 따내거나 중심부 알맹이(Core)를 통째로 도려내는 가공.",
+                process: "4대 소재 공통 (초기 성형 가공)",
+                caution: "관통 직전(바닥을 뚫고 나올 때) 이송 속도를 줄이지 않으면 하단 모서리가 크게 떨어져 나가는 관통 치핑(Exit Chipping)이 발생함. 코어 알맹이는 타 제품 모재로 재사용하므로 파손 주의.",
+                dialogue: "선임: \"통빼기(코어링) 바닥 거의 다 뚫릴 때 피드(이송 속도) 확 줄여! 그냥 밀고 나가면 밑단 모서리 왕창 깨지는 관통 치핑 난다.\""
+            },
+            {
+                no: 17,
+                category: "소재가공",
+                termKo: "황삭 / 정삭",
+                termEn: "(Rough / Finish Grinding)",
+                slang: "아라시(황삭), 시아게(정삭), 평면/원통 연삭",
+                definition: "거친 다이아몬드 휠로 치수를 빠르게 깎아내는 작업(황삭)과, 고운 휠로 도면 공차와 표면 거칠기를 정밀하게 맞추는 마감 연삭(정삭).",
+                process: "4대 소재 공통 (로터리·평면·MCT 연삭)",
+                caution: "황삭에서 너무 깊게 절입하면 눈에 안 보이는 내부 깊은 크랙(데미지층)이 생겨 정삭·에칭 후에도 불량으로 남음. 반드시 공정별 정해진 여유량(가공 여유)을 남겨야 함.",
+                dialogue: "선임: \"아라시(황삭) 칠 때 빨리 끝내려고 한 번에 깊게 깎지 마! 속에 데미지 크랙 먹으면 시아게(정삭) 치고 에칭 넣었을 때 크랙 다 올라온다.\""
+            },
+            {
+                no: 18,
+                category: "소재가공",
+                termKo: "머시닝센터 / CNC 연삭",
+                termEn: "(MCT / CNC Grinding Center)",
+                slang: "엠씨티(MCT), 씨엔씨(CNC), 단차/포켓 가공",
+                definition: "컴퓨터 수치제어(G코드) 프로그램에 따라 다이아몬드 전착 휠·드릴을 자동 교체하며 외곽 형상, 단차(포켓), 슬롯, 탭 등을 정밀 가공하는 설비.",
+                process: "4대 소재 공통 (형상·단차·홀 가공)",
+                caution: "가공 시작 전 반드시 공구 길이 보정값(Tool Offset)과 워크 원점(G54 등)을 재확인해야 함. 원점 오입력 시 고가 스핀들 충돌 및 모재 즉각 파손 사고 발생.",
+                dialogue: "선임: \"엠씨티(MCT) 스타트 버튼 누르기 전에 Z축 원점이랑 툴 번호 맞는지 허공에서 드라이런(Dry Run)으로 무조건 먼저 확인해!\""
+            },
+            {
+                no: 19,
+                category: "소재가공",
+                termKo: "초음파 가공",
+                termEn: "(Ultrasonic Machining, USM)",
+                slang: "초음파 가공기, 로터리 초음파, 홀/슬롯 가공",
+                definition: "공구(툴)를 회전시키면서 동시에 초당 20,000회 이상의 미세 상하 초음파 진동을 주어, 단단하고 깨지기 쉬운 세라믹·실리콘·쿼츠를 부하 없이 정밀 타공·연삭하는 공법.",
+                process: "Si, Quartz, AlN, SiC (깊은 홀·이형 슬롯 가공)",
+                caution: "초음파 발진 주파수(공진점)가 맞지 않거나 내부 관통 절삭유(Coolant)가 막히면 공구가 과열되어 즉시 부러지고 제품 내부에 박히는 치명적 불량이 발생함.",
+                dialogue: "선임: \"초음파 가공기 소리 들어봐. 공진 주파수 틀어지거나 센터 쿨런트(절삭유) 안 나오면 드릴 바로 부러져서 제품에 박힌다!\""
+            },
+            {
+                no: 20,
+                category: "소재가공",
+                termKo: "레이저 홀 가공",
+                termEn: "(Laser Drilling)",
+                slang: "레이저 타공, 레이저 미세홀",
+                definition: "고출력 레이저 빔을 집속하여 샤워헤드 등의 수백~수천 개 미세 가스 분사홀을 비접촉식으로 고속 타공하는 공정.",
+                process: "Si, SiC (샤워헤드 미세홀 타공)",
+                caution: "레이저 열에 의해 홀 내벽이 녹았다가 다시 굳은 변질층(리캐스트층, Recast Layer)과 열영향부 미세 크랙이 반드시 남으므로, 후공정(홀 사상 및 홀 에칭)에서 이를 완전히 제거해야 함.",
+                dialogue: "선임: \"레이저로 뚫은 홀은 안쪽 벽에 열 때문에 녹아붙은 리캐스트층이 있어. 후공정 홀 에칭에서 이 변질층을 다 녹여내야 크랙이 안 생겨.\""
+            },
+            {
+                no: 21,
+                category: "소재가공",
+                termKo: "PCD / 다이아몬드 미세홀 드릴링",
+                termEn: "(PCD / Diamond Micro-Drilling)",
+                slang: "피씨디(PCD) 드릴, 마이크로 드릴, 핀홀 가공",
+                definition: "다결정 다이아몬드(PCD) 소결체로 만든 초소경 드릴(Ø0.3~Ø2.0mm 등)을 고속 회전시켜 정밀 미세홀을 물리적으로 뚫는 가공.",
+                process: "Si, AlN, SiC (샤워헤드·정전척 미세홀)",
+                caution: "드릴 마모 한계 수명(Tool Life)을 초과하여 사용하면 홀 출구 치핑이 급증함. 펙 드릴링(Peck Drilling: 조금 뚫고 후퇴하여 칩을 배출하는 동작) 조건과 절삭유 압력을 철저히 유지할 것.",
+                dialogue: "선임: \"피씨디(PCD) 드릴은 정해진 구멍 타수(수명) 넘기면 날 무뎌져서 출구 치핑 바로 터져. 카운트 다 차면 미련 없이 새 툴로 갈아!\""
+            },
+            {
+                no: 22,
+                category: "소재가공",
+                termKo: "스텝홀 / 카운터보어 / 카운터싱크",
+                termEn: "(Step Hole / Counterbore / Countersink)",
+                slang: "자구리(카운터보어), 사라(접시머리/카운터싱크), 단차홀",
+                definition: "볼트 머리가 표면 위로 튀어나오지 않도록 구멍 입구를 넓고 평평하게 파내는 단차홀(카운터보어/자구리) 또는 원뿔 경사지게 파내는 홀(카운터싱크/사라).",
+                process: "4대 소재 공통 (체결홀·가스 분사 단차홀)",
+                caution: "작은 관통홀과 큰 단차홀의 중심축(동심도)이 틀어지거나, 단차 바닥면 깊이가 도면 공차를 벗어나면 챔버 조립 시 볼트 체결 응력으로 파츠가 깨짐.",
+                dialogue: "선임: \"현장에서 '자구리 파준다'고 하면 도면의 카운터보어(단차홀) 가공을 뜻해. 자구리 바닥 깊이 공차 빡빡하니까 깊이 게이지로 전수 체크해.\""
+            },
+            {
+                no: 23,
+                category: "소재가공",
+                termKo: "드레싱 / 트루잉",
+                termEn: "(Dressing / Truing)",
+                slang: "드레싱, 휠 세우기, 눈메움 제거, 흔들림 잡기",
+                definition: "다이아몬드 휠 표면에 낀 가공 찌꺼기(눈메움)를 벗겨내어 날을 날카롭게 세우는 작업(드레싱)과, 휠의 편심·형상 틀어짐을 똑바르게 잡아주는 작업(트루잉).",
+                process: "4대 소재 공통 (연삭·MCT·코어링 공구 관리)",
+                caution: "드레싱을 제때 하지 않고 무뎌진 휠로 가공을 강행하면 절삭 부하가 급증하여 제품 표면에 검은 탄 자국(버닝, Burning)이나 대형 크랙이 발생함.",
+                dialogue: "선임: \"휠에 슬러지 꽉 차서 눈메움 생겼네! 이대로 깎으면 마찰열 때문에 버닝(탄 자국) 나니까 드레싱 스틱으로 휠 날부터 세워.\""
+            },
+            {
+                no: 24,
+                category: "소재가공",
+                termKo: "왁스 본딩 / 마운팅",
+                termEn: "(Wax Bonding / Mounting)",
+                slang: "왁스 작업, 마운팅, 핫플레이트 본딩",
+                definition: "진공 흡착이 어려운 얇은 링이나 다공판(샤워헤드 등)을 가공하기 위해, 열에 녹는 전용 열가소성 왁스로 베이스 플레이트(지그) 위에 제품을 임시 접착·고정하는 공정.",
+                process: "Si, Quartz, SiC (박판·링·다공판 가공 고정)",
+                caution: "접착면 사이에 기포나 먼지가 들어가면 그 부분만 들떠서 가공 후 두께 편차(평행도 불량)가 발생함. 또한 탈착 시 급격히 가열·냉각하면 열충격으로 제품이 깨짐.",
+                dialogue: "선임: \"왁스 본딩할 때 지그 바닥에 먼지 한 톨만 들어가도 그 자리만 높게 깎여서 평행도 불량 난다. 기포 안 차게 고르게 눌러줘.\""
+            },
+            {
+                no: 25,
+                category: "소재가공",
+                termKo: "진공척 / 다공성 세라믹척",
+                termEn: "(Vacuum Chuck / Porous Chuck)",
+                slang: "버큠척(Vacuum), 포러스척, 진공 물림",
+                definition: "미세한 기공이 뚫린 세라믹 테이블 아래에서 공기를 빨아들여(진공 흡착), 클램프 물리적 집게 없이도 평판·링 제품을 변형 없이 수평으로 고정하는 장치.",
+                process: "4대 소재 공통 (평면연삭·MCT 가공)",
+                caution: "제품을 올리기 전 척 바닥면의 미세 슬러지(가공 가루)를 완벽히 닦아내지 않으면, 진공 압력에 의해 제품이 휘어지거나(탄성 변형) 가공 중 제품이 튕겨 나가는 대형 사고가 발생함.",
+                dialogue: "선임: \"버큠척(진공척)에 제품 올리기 전에 바닥 슬러지 무조건 깨끗이 닦아! 이물 낀 채로 버큠 걸면 제품 깨지거나 튕겨 나간다.\""
+            },
+            {
+                no: 26,
+                category: "소재가공",
+                termKo: "양면 래핑",
+                termEn: "(Double-Side Lapping)",
+                slang: "래핑(Lapping), 양면 연마, 슬러리 연마",
+                definition: "상·하 정반(주철/세라믹 판) 사이에 제품을 넣고 연마재 죽(슬러리, Slurry)을 흘려보내며 유성 기어처럼 회전시켜, 양면의 평탄도·평행도·두께를 마이크로미터 단위로 맞추는 공정.",
+                process: "Si, Quartz, AlN, SiC (고평탄도 평판·링 가공)",
+                caution: "정반 자체의 평탄도가 무너지거나 슬러리 농도·입도가 오염되면 제품 전체 표면에 깊은 긁힘(대형 스크래치)과 가장자리 처짐(롤오프, Roll-off) 불량이 발생함.",
+                dialogue: "선임: \"래핑 끝난 제품은 슬러리가 마르기 전에 바로 물세정으로 넘겨야 해. 표면에 슬러리 말라붙으면 절대 안 지워진다!\""
+            },
+            {
+                no: 27,
+                category: "소재가공",
+                termKo: "경면 폴리싱",
+                termEn: "(Mirror Polishing / CMP)",
+                slang: "폴리싱, 경면 가공, 빠우/광내기",
+                definition: "부드러운 폴리싱 패드와 초미세 연마액(콜로이달 실리카, 다이아몬드 페이스트 등)을 사용하여 거울처럼 사물이 비치는 극초정밀 표면 거칠기(Ra 0.01㎛ 이하)를 만드는 공정.",
+                process: "Si, Quartz, SiC (초고밀도 마감면 가공)",
+                caution: "외부에서 날아온 단 한 알의 굵은 먼지(이물)만 패드에 유입되어도 거울 같은 표면에 혜성 꼬리 모양의 치명적인 스크래치(Comet Scratch)가 발생하므로 청결 관리가 생명임.",
+                dialogue: "선임: \"경면 폴리싱 패드 위에 먼지 한 톨만 떨어져도 제품 전체에 혜성 기스(스크래치) 쫙 난다. 패드 커버 항상 닫아둬!\""
+            },
+            {
+                no: 28,
+                category: "소재가공",
+                termKo: "샌드블라스트 / 비드블라스트",
+                termEn: "(Sand / Bead Blasting)",
+                slang: "샌딩(Sanding), 블라스트, 무광 처리",
+                definition: "고압 에어로 미세한 연마 입자(알루미나, SiC, 글래스 비드 등)를 제품 표면에 분사하여 균일한 무광 거칠기(조도)를 부여하거나 표면 변질층을 벗겨내는 공정.",
+                process: "Quartz, AlN, 세라믹 (표면 조도 제어·코팅 전처리)",
+                caution: "가공하지 말아야 할 정밀 경면 부위에는 반드시 보호 테이프(마스킹, Masking)를 빈틈없이 붙여야 함. 노즐을 한 곳에 멈추고 쏘면 표면이 깊게 파이는 단차 불량 발생.",
+                dialogue: "선임: \"쿼츠 샌딩 치기 전에 안쪽 실링 면에 마스킹 테이프 제대로 붙었는지 확인해! 실링 면에 샌딩 먹으면 진공 새서 폐기야.\""
+            },
+            {
+                no: 29,
+                category: "소재가공",
+                termKo: "화염연마",
+                termEn: "(Flame Polishing)",
+                slang: "불사상, 토치 작업, 화염 처리",
+                definition: "산소-수소 혼합 가스 토치의 고온 화염(약 2,000℃ 이상)으로 석영 유리(Quartz)의 불투명한 연삭 표면을 순간적으로 살짝 녹여 투명하고 매끄러운 유리면으로 만들고 미세 크랙을 힐링하는 공정.",
+                process: "Quartz 전용 (연삭 후 표면 경면화 및 미세크랙 제거)",
+                caution: "화염연마 전 쿼츠 표면에 작업자의 맨손 지문(유분)이나 세정 잔류물이 남아 있으면, 열을 받는 순간 하얗게 결정화되어 타버리는 '백화(Devitrification) 불량'이 발생함.",
+                dialogue: "선임: \"불사상(화염연마) 들어가기 전에 알코올로 표면 한 번 더 닦아! 손기름 묻은 채로 토치 불 대면 하얗게 백화 떠서 못 살린다.\""
+            },
+            {
+                no: 30,
+                category: "소재가공",
+                termKo: "수작업 사상",
+                termEn: "(Hand Finishing / Deburring)",
+                slang: "사상 작업, 수제 연마, 단차/툴마크 제거",
+                definition: "기계 가공 후 남은 미세한 툴 자국(Tool Mark), 날카로운 모서리(Burr), 미세 치핑을 작업자가 다이아몬드 수세미(핸드 패드), 루비 스톤, 전동 핸드피스 등으로 정밀하게 다듬는 공정.",
+                process: "4대 소재 공통 (가공 후 외관·조도·코너 마감)",
+                caution: "특정 부위의 기스나 치핑만 지우려고 한 곳만 집중적으로 문지르면 표면이 움푹 파이는 '국부 단차(Over-sanding)'가 발생하여 평탄도·진원도 공차를 벗어나게 됨.",
+                dialogue: "선임: \"사상할 때 기스 하나 지우겠다고 거기만 계속 문지르면 푹 파여서 단차 난다. 주변 면이랑 넓게 블렌딩(연결)해서 고르게 다듬어.\""
+            },
+            {
+                no: 31,
+                category: "소재가공",
+                termKo: "면취 / 챔퍼링",
+                termEn: "(Chamfering / Edge Beveling)",
+                slang: "면취, C면 가공, R면 가공, 코너 따기",
+                definition: "직각으로 날카롭게 살아 있는 제품 모서리가 충격에 깨지지(치핑) 않도록 도면 규격(예: C0.3, R0.5)에 맞춰 모서리를 비스듬히(C면) 또는 둥글게(R면) 깎아내는 작업.",
+                process: "4대 소재 공통 (내외경 코너·단차 모서리)",
+                caution: "면취량이 도면 규격보다 작으면 후공정에서 치핑이 발생하고, 너무 크면(과면취) 웨이퍼 안착 면적이 줄어들어 치수 불량이 됨. 둘레 전체의 면취 폭이 일정해야 함.",
+                dialogue: "선임: \"도면에 C0.5라고 적혀 있으면 가로·세로 0.5mm로 45도 모서리 면취하라는 뜻이야. 면취 폭이 울퉁불퉁하지 않게 일정하게 돌려.\""
+            },
+            {
+                no: 32,
+                category: "소재가공",
+                termKo: "홀 사상 / 브러시 호닝",
+                termEn: "(Hole Finishing / Brush Honing)",
+                slang: "홀 사상, 구멍치기, 와이어/다이아 브러시 작업",
+                definition: "미세홀 가공 후 홀 입·출구 모서리의 미세 치핑을 다듬고, 홀 내벽의 거친 파쇄층이나 레이저 변질층을 다이아몬드 연마 브러시·목봉·연마사로 매끄럽게 닦아내는 공정.",
+                process: "Si, Quartz, AlN, SiC (샤워헤드·배플·인젝터 홀 마감)",
+                caution: "브러시를 홀 축 방향과 비스듬하게 넣거나 무리하게 왕복하면 홀 입구가 타원형으로 찌그러지거나(나팔관 현상) 홀경이 커져 핀게이지 불량이 발생함.",
+                dialogue: "선임: \"홀 사상 칠 때 브러시를 삐딱하게 넣으면 홀 입구가 나팔처럼 넓어져서 핀게이지 공차 다 나간다! 반드시 수직으로 작업해.\""
+            },
+
+            // ==================== Ⅳ. 에칭·세정 (No. 33 ~ 44) ====================
+            {
+                no: 33,
+                category: "에칭·세정",
+                termKo: "홀 에칭",
+                termEn: "(Chemical Hole Etching)",
+                slang: "홀 에칭, 구멍 키우기, 약액 확공",
+                definition: "기계·레이저로 뚫은 샤워헤드 미세홀 내부에 산성 에칭 약액을 순환시켜, 홀 내벽의 가공 데미지(미세 크랙)를 녹여 없애고 목표 홀 직경(핀게이지 치수)까지 정밀하게 넓히는 공정.",
+                process: "Si (샤워헤드 미세홀 화학 가공)",
+                caution: "약액 온도나 침지 시간(초 단위)이 조금만 초과되어도 수천 개의 홀 직경이 일제히 커져(과에칭, Over-etching) 복구 불가능한 대형 폐기 사고로 이어짐.",
+                dialogue: "선임: \"홀 에칭은 시간 싸움이야! 타이머 10초만 늦게 건져도 홀경이 0.02mm 커져서 Go/No-Go 핀게이지 다 빠져버린다.\""
+            },
+            {
+                no: 34,
+                category: "에칭·세정",
+                termKo: "스트레스 에칭 / 데미지 에칭",
+                termEn: "(Stress / Damage Relief Etching)",
+                slang: "데미지 에칭, 전면 에칭, 크랙 제거 에칭",
+                definition: "다이아몬드 연삭·사상 과정에서 제품 표면 아래(수~수십 ㎛ 깊이)에 발생한 미세 파쇄층(Sub-surface Damage)과 잔류 응력을 화학 약액으로 얇게 녹여 제거하는 공정.",
+                process: "Si, Quartz (가공 후 표면 안정화 및 파티클 억제)",
+                caution: "에칭 전 표면에 왁스 찌꺼기나 유분이 남아 있으면 그 부분만 약액이 닿지 않아 얼룩이나 돌기처럼 남는 '미에칭(Under-etching) 불량'이 발생하므로 전세정이 필수임.",
+                dialogue: "선임: \"기계 연삭만 끝낸 실리콘은 겉은 멀쩡해 보여도 표면 밑에 미세 크랙(데미지층)이 깔려 있어. 데미지 에칭으로 그 층을 녹여내야 챔버에서 파티클이 안 떨어져.\""
+            },
+            {
+                no: 35,
+                category: "에칭·세정",
+                termKo: "불산 / 혼산 약액",
+                termEn: "(HF / Mixed Acid: HF+HNO₃+CH₃COOH)",
+                slang: "불산(HF), 혼산, 에칭액",
+                definition: "석영 유리(Quartz)를 에칭·세정할 때 쓰는 불화수소산(불산, HF)과, 실리콘(Si)을 화학 식각할 때 쓰는 불산+질산+초산 혼합 강산 용액(혼산).",
+                process: "Si, Quartz (화공 에칭 및 정밀 약액 세정)",
+                caution: "불산(HF)은 피부에 소량만 튀어도 통증 없이 살을 뚫고 들어가 뼈(칼슘)를 녹이는 맹독성 물질임! 작업 시 반드시 전용 내산복, 안면 보호대, 내산 이중 장갑을 착용하고, 피부 접촉 시 즉시 '글루콘산칼슘(칼슘글루코네이트) 겔'을 도포 후 응급실로 이동해야 함.",
+                dialogue: "선임: \"불산·혼산 라인 들어갈 땐 내산 보호구 완벽 착용이 생명줄이야! 만약 한 방울이라도 튀면 물로 씻고 비치된 칼슘글루코네이트 겔부터 즉시 발라야 해!\""
+            },
+            {
+                no: 36,
+                category: "에칭·세정",
+                termKo: "어닐링 / 열처리",
+                termEn: "(Annealing / Thermal Stress Relief)",
+                slang: "어닐링, 열처리, 응력 제거로",
+                definition: "기계 가공이나 화염연마 후 소재 내부에 쌓인 열응력·기계적 잔류 응력을 풀어주기 위해, 전기로(Furnace)에서 일정 온도로 서서히 가열한 뒤 천천히 냉각(서냉)시키는 공정.",
+                process: "Quartz, 세라믹 (내부 잔류응력 제거)",
+                caution: "냉각 속도가 정해진 프로파일보다 빠르거나 온도가 내려가기 전에 전기로 문을 일찍 열면, 찬 공기와 만나 열충격(Thermal Shock)으로 제품 전체가 산산조각 남.",
+                dialogue: "선임: \"어닐링 전기로 온도 다 떨어지기 전에 급하다고 문 열면 절대 안 돼! 찬 바람 닿는 순간 열충격으로 쿼츠 라이너 다 깨진다.\""
+            },
+            {
+                no: 37,
+                category: "에칭·세정",
+                termKo: "초순수 세정",
+                termEn: "(DI Water Rinsing / Shower)",
+                slang: "디아이(DI) 워터, 초순수 샤워, 린스(Rinse)",
+                definition: "이온, 미생물, 미세 입자를 극한으로 제거하여 전기 비저항 값(18 MΩ·cm 수준)을 높인 초순수(Deionized Water)로 제품 표면과 홀 내부의 약액·이물을 헹궈내는 공정.",
+                process: "Si, Quartz, SiC (약액 세정 후 헹굼 및 최종 세정)",
+                caution: "초순수 수질(비저항 수치)이 기준치 이하로 떨어지면 건조 후 표면에 하얀 물자국(워터마크, Water Mark)이 남음. 또한 AlN(질화알루미늄) 소재는 물과 반응해 부식되므로 일반 DI 침지 세정 금지.",
+                dialogue: "선임: \"세정기 비저항 계기판 숫자가 기준치 밑으로 떨어지면 디아이(DI) 수질 불량이야. 그대로 작업하면 건조 후에 워터마크(물얼룩) 다 남는다!\""
+            },
+            {
+                no: 38,
+                category: "에칭·세정",
+                termKo: "초음파 / 메가소닉 세정",
+                termEn: "(Ultrasonic / Megasonic Cleaning)",
+                slang: "초음파 세정조, 메가소닉, 정밀 수조 세정",
+                definition: "초순수나 세정액 수조에 고주파 진동(초음파: 수십 kHz, 메가소닉: 800kHz~1MHz 이상)을 가해 미세 기포(캐비테이션)의 힘으로 깊은 홀 내부와 표면의 서브마이크론 파티클을 떼어내는 공정.",
+                process: "4대 소재 (최종 정밀 세정 공정)",
+                caution: "수조 바닥 진동판 위에 제품을 직접 올려놓으면 진동 충격으로 치핑이나 크랙이 발생하므로 반드시 전용 테플론(PTFE)/수지 바스켓(지그)에 안착시켜야 함.",
+                dialogue: "선임: \"초음파 수조 바닥에 제품 바로 내려놓으면 진동 때문에 모서리 다 깨진다! 무조건 전용 테플론 지그(바스켓)에 걸어서 담가.\""
+            },
+            {
+                no: 39,
+                category: "에칭·세정",
+                termKo: "CDA 에어블로우",
+                termEn: "(Clean Dry Air Blowing)",
+                slang: "에어건 불기, 에어블로우, 물기 제거",
+                definition: "수분과 유분, 미세먼지가 완벽히 필터링된 고순도 압축 공기(CDA) 또는 질소(N₂) 건을 이용해 세정 후 제품 표면과 미세홀 내부의 물방울을 불어내는 작업.",
+                process: "전 소재 공통 (세정 후 1차 수분 제거)",
+                caution: "에어건 노즐 끝이 제품 표면에 부딪히면 즉각 치핑·파손이 발생하므로 반드시 '제품과 노즐 간격 5cm 이상 유지' 수칙을 지키고, 위에서 아래로 한 방향으로 물기를 몰아내야 워터마크가 생기지 않음.",
+                dialogue: "선임: \"에어건 불 때 노즐 끝이 제품에 닿아서 치핑 내는 사고가 제일 많아! 무조건 5cm 이상 띄우고 위에서 아래로 물방울을 몰아서 날려.\""
+            },
+            {
+                no: 40,
+                category: "에칭·세정",
+                termKo: "열풍 건조",
+                termEn: "(Hot Air Oven Drying)",
+                slang: "오븐 건조, 열풍 건조기, 수분 베이킹",
+                definition: "에어블로우 후 미세홀 내부나 기공에 남아 있는 잔류 수분을 완벽히 증발시키기 위해, 헤파(HEPA) 필터가 장착된 청정 건조 오븐(약 80~85℃ 내외)에서 건조하는 공정.",
+                process: "전 소재 공통 (최종 포장 전 완전 건조)",
+                caution: "물방울이 맺힌 채로 오븐에 넣으면 물방울 자리가 그대로 말라붙어 지워지지 않는 워터마크(물얼룩) 불량이 됨. 또한 오븐에서 꺼낸 직후 뜨거운 상태에서 무리하게 취급하지 말 것.",
+                dialogue: "선임: \"에어건으로 물방울 다 안 날리고 오븐에 넣으면 85℃ 열에 물자국이 그대로 구워져서 안 지워진다. 물기 완벽히 털고 넣어!\""
+            },
+            {
+                no: 41,
+                category: "에칭·세정",
+                termKo: "알코올 와이핑",
+                termEn: "(IPA Wiping)",
+                slang: "보루 작업, 알코올 닦기, 와이퍼 닦기",
+                definition: "고순도 이소프로필알코올(IPA)을 먼지가 나지 않는 클린룸 전용 무진 와이퍼(현장 호칭: 보루)에 적셔 제품 표면을 최종 닦아내는 작업.",
+                process: "전 소재 공통 (암실 검사 및 클린룸 최종 포장 전)",
+                caution: "와이퍼를 왔다 갔다 왕복해서 문지르면 닦아낸 파티클이 다시 묻고 스크래치가 나므로, 반드시 '한 방향(1-Way)으로 닦고 와이퍼 면을 접어 새 면으로 교체'하는 원칙을 지켜야 함.",
+                dialogue: "선임: \"클린룸 보루(와이퍼)로 알코올 닦을 때 걸레질하듯 왕복으로 문지르지 마! 한 번 쓸었으면 와이퍼 뒤집어서 새 면으로 한 방향으로만 닦아.\""
+            },
+            {
+                no: 42,
+                category: "에칭·세정",
+                termKo: "클린룸 / 패스박스",
+                termEn: "(Cleanroom & Pass Box)",
+                slang: "클린룸, 에어샤워, 패스박스(인터록)",
+                definition: "공기 중 미세먼지(Particle) 농도와 온·습도를 엄격히 제어하는 청정 구역(클린룸)과, 외부 먼지 유입 없이 물품만 주고받는 이중문 전달 창구(패스박스).",
+                process: "최종 세정·암실 외관검사·진공포장 구역",
+                caution: "클린룸 내부는 외부보다 기압이 높은 양압(+) 상태를 유지해야 먼지가 들어오지 않음. 패스박스의 양쪽 문을 동시에 여는 행위(인터록 해제)는 클린룸 오염을 유발하므로 절대 금지.",
+                dialogue: "선임: \"패스박스 양쪽 문을 동시에 열면 밖의 더러운 공기가 클린룸으로 빨려 들어와! 반드시 한쪽 문이 완전히 닫힌 걸 확인하고 열어.\""
+            },
+            {
+                no: 43,
+                category: "에칭·세정",
+                termKo: "표준 파지법 / 외곽 파지",
+                termEn: "(Standard Edge Handling)",
+                slang: "외곽 잡기, 양손 파지, 파지법",
+                definition: "세정이 완료된 제품을 잡을 때 플라즈마에 노출되는 상·하부 기능면이나 홀 부위를 만지지 않고, 클린룸용 니트릴 장갑을 낀 양손으로 제품의 바깥쪽 옆면(외주면)만 대칭으로 받쳐 드는 표준 동작.",
+                process: "전 공정 공통 (세정·검사·포장 시 필수 수칙)",
+                caution: "한 손으로 링이나 전극을 집어 들면 무게 중심이 쏠려 미끄러지거나 휨 응력으로 파손됨. 또한 장갑으로 코나 얼굴을 만진 뒤 제품을 잡으면 유분 오염이 즉시 전이됨.",
+                dialogue: "선임: \"세정 끝난 샤워헤드 들 때 절대 구멍 뚫린 가운데 면 잡지 마! 깨끗한 니트릴 장갑 끼고 바깥 옆면(외곽)만 양손으로 받쳐서 들어.\""
+            },
+            {
+                no: 44,
+                category: "에칭·세정",
+                termKo: "2중 진공 포장",
+                termEn: "(Double Vacuum Packaging)",
+                slang: "진공 실링, 투백(2-Bag) 포장, 클린 백 포장",
+                definition: "고객사 클린룸에 반입할 때까지 파티클과 수분·산화를 차단하기 위해, 대전방지 클린 백(Clean Bag)으로 1차 진공 밀봉한 뒤 외피 백으로 한 번 더 감싸 총 2중으로 진공 실링하는 출하 공정.",
+                process: "전 제품 공통 (최종 출하 포장)",
+                caution: "제품 모서리에 보호대(PET 가드/쿠션 링)를 끼우지 않고 진공을 강하게 뽑으면 비닐이 뾰족한 모서리에 찔려 미세한 구멍(핀홀)이 뚫리고 배송 중 진공이 풀리는(Leak) 클레임이 발생함.",
+                dialogue: "선임: \"진공 포장 끝나면 실링 선이 끊긴 데 없는지, 30분 뒤에 진공이 느슨해지는 진공 풀림(리크) 없는지 전수 확인하고 박스에 넣어!\""
+            },
+
+            // ==================== Ⅴ. 측정·공차 (No. 45 ~ 56) ====================
+            {
+                no: 45,
+                category: "측정·공차",
+                termKo: "버니어 캘리퍼스 / 마이크로미터",
+                termEn: "(Vernier Calipers / Micrometer)",
+                slang: "노기스(버니어 캘리퍼스), 마이크로(마이크로미터)",
+                definition: "제품의 외경·내경·두께·깊이를 간편하게 재는 측정기(버니어 캘리퍼스: 0.01~0.02mm 단위)와, 정밀 나사 원리로 두께·외경을 0.001mm(1㎛) 단위까지 정밀 측정하는 기기(마이크로미터).",
+                process: "전 공정 자주검사 및 수입·출하 검사",
+                caution: "금속 측정기 죠(Jaw)를 세라믹·실리콘 모서리에 세게 부딪치거나 물린 채로 끌면 측정기 자체가 제품을 깨뜨려 치핑과 검은 금속 스크래치(메탈 마크)를 남김! 측정 전 영점(Zero) 확인 필수.",
+                dialogue: "선임: \"실리콘 링 재면서 노기스(버니어) 쇠 날을 제품에 탁탁 부딪히면 네 손으로 치핑 내는 거야! 살포시 대고 잰 상태에서 옆으로 끌지 마.\""
+            },
+            {
+                no: 46,
+                category: "측정·공차",
+                termKo: "핀게이지",
+                termEn: "(Pin Gauge: Go / No-Go)",
+                slang: "핀게이지, 고/노고(Go/No-Go) 핀",
+                definition: "0.001mm~0.01mm 단위로 정밀 제작된 원통형 핀을 미세홀에 직접 끼워보아 홀 직경이 공차 안에 들어왔는지 판정하는 측정 도구. 하한 치수 핀(Go)은 통과하고 상한 치수 핀(No-Go)은 들어가지 않아야 합격.",
+                process: "샤워헤드·배플·정전척 미세홀 전수 검사",
+                caution: "안 들어가는 핀게이지를 억지로 힘주어 쑤셔 넣으면 홀 입구 모서리가 깨지거나(홀 치핑) 핀이 홀 안에 끼어 부러지는 대형 사고가 발생함. 반드시 핀 자체 무게(자중)만으로 수직 삽입할 것.",
+                dialogue: "선임: \"핀게이지 검사는 힘으로 밀어 넣는 게 아니야! 수직으로 세워서 살짝 놓았을 때 자연스럽게 쏙 들어가면 Go, 걸리면 No-Go야.\""
+            },
+            {
+                no: 47,
+                category: "측정·공차",
+                termKo: "3차원 측정기 / 비전 측정기",
+                termEn: "(CMM / Optical Vision Measuring System)",
+                slang: "삼차원(CMM), 비전(Vision), 프로브/광학 측정",
+                definition: "루비 볼 센서(프로브)를 제품에 접촉시켜 3차원 공간 좌표·기하공차를 정밀 측정하는 장비(CMM)와, 고배율 카메라 영상으로 비접촉식 미세홀 위치·치수를 고속 측정하는 장비(비전).",
+                process: "정밀 가공 후 품질보증(QC) 성적서 발행",
+                caution: "측정실 온도(20±1℃)와 제품 온도가 다르면 열팽창 오차로 수 마이크로미터 치수가 틀어지므로 온도 안정화 후 측정해야 하며, 제품 표면에 물기나 먼지가 있으면 프로브 오작동이 발생함.",
+                dialogue: "선임: \"가공 끝난 제품 손으로 만져서 따뜻해진 상태로 삼차원(CMM) 올리면 열팽창 때문에 치수 다 틀리게 나와. 측정실 정반에서 온도 맞춘 뒤에 찍어.\""
+            },
+            {
+                no: 48,
+                category: "측정·공차",
+                termKo: "표면조도계",
+                termEn: "(Surface Roughness Tester: Ra / Rz)",
+                slang: "조도계, 거칠기 측정기, 알에이(Ra) 값",
+                definition: "미세한 다이아몬드 바늘(촉침, Stylus)이 제품 표면을 살짝 긁고 지나가며 눈으로 보이지 않는 미세한 요철(표면 거칠기, 중심선 평균 거칠기 Ra 등)을 마이크로미터(㎛) 단위로 측정하는 기기.",
+                process: "연삭·래핑·폴리싱·샌딩 후 표면 품질 검사",
+                caution: "조도계 바늘(촉침) 끝은 극도로 섬세하여 측정 중 제품을 건드리거나 바늘을 옆으로 밀면 즉시 부러짐(수백만 원 수리비 발생). 또한 측정 방향은 가공 결(연삭 결)과 직각 방향으로 측정해야 정확함.",
+                dialogue: "선임: \"조도계 측정 중에는 정반 건드리지 마! 촉침 바늘이 머리카락보다 가늘어서 살짝만 쳐도 부러진다. 도면 Ra 규격 안 들어오는지 꼭 확인해.\""
+            },
+            {
+                no: 49,
+                category: "측정·공차",
+                termKo: "투영기 / 윤곽측정기",
+                termEn: "(Profile Projector / Contour Tester)",
+                slang: "투영기, 형상 측정기, R/각도 측정",
+                definition: "버니어 캘리퍼스로 재기 힘든 미세한 모서리 R값(곡률), C면 면취 폭, 나사산, 복잡한 단차 단면 윤곽을 수십 배 확대 투영하거나 바늘로 따라가며 도면과 대조하는 측정기.",
+                process: "포커스링 단차 코너 R·면취 폭·특수 홈 검사",
+                caution: "투영기 렌즈 배율(10배, 20배, 50배) 설정과 화면 스케일 설정이 일치하는지 먼저 확인하고, 측정 부위에 그림자가 생기지 않도록 경사각과 초점을 정확히 맞춰야 함.",
+                dialogue: "선임: \"포커스링 안쪽 코너 R0.2랑 면취 C0.3은 노기스로 못 재니까 투영기나 윤곽측정기에 올려서 확대 단면으로 찍어봐.\""
+            },
+            {
+                no: 50,
+                category: "측정·공차",
+                termKo: "암실 외관검사",
+                termEn: "(Darkroom Visual Inspection)",
+                slang: "암실 검사, 집광등/백열등 검사, 육안 외관검사",
+                definition: "외부 조명을 모두 끈 어두운 부스(암실) 안에서 고휘도 집광등(할로겐/LED 스포트라이트)이나 백열등을 제품 표면에 비스듬히 비추어, 일반 형광등 아래에서는 절대 안 보이는 미세 스크래치·치핑·얼룩·홀 막힘을 찾아내는 검사.",
+                process: "사상 후 및 최종 포장 전 전수 외관검사",
+                caution: "빛을 수직으로만 비추면 얕은 스크래치(혜성 기스)나 워터마크가 보이지 않으므로, 반드시 제품을 천천히 회전시키며 빛의 반사 각도를 여러 방향으로 바꿔가며 관찰해야 함.",
+                dialogue: "선임: \"밝은 작업대에서는 안 보이던 미세 기스도 암실에 들어가서 집광등을 비스듬히 비춰보면 빛이 반사돼서 한눈에 다 보인다!\""
+            },
+            {
+                no: 51,
+                category: "측정·공차",
+                termKo: "평탄도 / 평행도",
+                termEn: "(Flatness / Parallelism)",
+                slang: "평탄도(바닥 휨), 평행도(두께 편차)",
+                definition: "한 면이 울퉁불퉁하거나 휘지 않고 얼마나 완벽한 평면인가를 나타내는 기하공차(평탄도, ⏥)와, 마주 보는 위·아래 두 면이 어느 지점에서나 똑같은 간격(두께)을 유지하는가를 나타내는 공차(평행도, //).",
+                process: "정전척(ESC)·샤워헤드·포커스링 평면연삭 및 래핑",
+                caution: "버니어 캘리퍼스로 한두 군데 두께만 재서 합격이라고 착각하면 안 됨. 시계 방향으로 4~8포인트 이상 두께 편차(TTV)를 찍어 평행도를 확인하고, 정반 위 흔들림과 3차원 측정기로 평탄도를 검증해야 함.",
+                dialogue: "선임: \"두께 한 군데만 재고 다 됐다고 하지 마! 12시·3시·6시·9시 방향 두께가 다 같아야 평행도가 나오는 거야.\""
+            },
+            {
+                no: 52,
+                category: "측정·공차",
+                termKo: "진원도 / 원통도",
+                termEn: "(Roundness / Cylindricity)",
+                slang: "진원도(타원 찌그러짐), 원통도",
+                definition: "원형 부품(링·실린더)의 단면이 찌그러진 타원이 아니라 얼마나 이상적인 정원(진짜 원)에 가까운가를 나타내는 기하공차(진원도, ○)와, 원통 전체 높이에 걸쳐 지름과 축이 일정한가를 보는 공차(원통도, /○/).",
+                process: "포커스링·커버링·챔버 라이너 원통/내외경 가공",
+                caution: "두께가 얇은 쿼츠 라이너나 대형 링을 척으로 너무 세게 물리면 가공 중에는 둥글게 깎였다가 척을 푸는 순간 탄성이 풀리며 삼각형(오니기리 현상)이나 타원으로 찌그러지는 진원도 불량이 발생함.",
+                dialogue: "선임: \"얇은 링 가공할 때 척 압력 너무 세게 잡으면, 물림 풀었을 때 통통 튀면서 타원으로 찌그러져 진원도 공차 다 나간다!\""
+            },
+            {
+                no: 53,
+                category: "측정·공차",
+                termKo: "동심도 / 위치도",
+                termEn: "(Concentricity / True Position)",
+                slang: "동심도(내외경 편심), 위치도(홀 좌표 편차)",
+                definition: "바깥 원(외경)의 중심과 안쪽 원(내경/단차)의 중심이 한 점에 정확히 일치하는 정도(동심도, ◎)와, 도면에 지정된 이론적 좌표에서 각 구멍(홀)의 실제 위치가 벗어나지 않은 정도(위치도, ⌖).",
+                process: "링류 내외경 가공 및 샤워헤드·ESC 홀 가공",
+                caution: "제품을 뒤집어 2차 세팅할 때 다이얼 게이지로 외경 중심(런아웃, Run-out)을 0.005mm 이내로 정밀하게 잡지 않으면 내경과 외경의 중심이 틀어져 한쪽 살두께만 얇아지는 편심(동심도 불량)이 발생함.",
+                dialogue: "선임: \"제품 뒤집어서 세팅할 때 다이얼 게이지로 중심 안 잡으면 안쪽 단차랑 바깥 외경 중심이 어긋나는 편심(동심도 불량) 난다!\""
+            },
+            {
+                no: 54,
+                category: "측정·공차",
+                termKo: "직각도 / 경사도",
+                termEn: "(Perpendicularity / Angularity)",
+                slang: "직각도(수직 틀어짐), 경사홀 각도",
+                definition: "바닥 기준면(데이텀)에 대하여 옆면이나 구멍이 정확히 90° 수직을 이루는 정도(직각도, ⊥)와, 가스 분사용 경사홀 등이 도면에 지정된 각도로 정확히 기울어진 정도(경사도, ∠).",
+                process: "챔버 라이너 외벽·포커스링 단차벽·샤워헤드 경사홀",
+                caution: "지그 바닥에 작은 칩(이물)이 끼어 제품이 미세하게 기울어진 채로 가공되면, 모든 구멍과 옆면의 직각도가 한꺼번에 틀어져 챔버 조립이 불가능해짐.",
+                dialogue: "선임: \"지그 바닥에 칩 하나만 끼어도 제품이 비스듬히 들려서 구멍 수천 개 직각도가 전부 비뚤어진다. 세팅 전 바닥 청소 철저히 해!\""
+            },
+            {
+                no: 55,
+                category: "측정·공차",
+                termKo: "곡률반경 / C면·R면",
+                termEn: "(Radius of Curvature / C-Chamfer & R-Edge)",
+                slang: "알(R)값, 씨(C)면, 코너 라운드",
+                definition: "도면에서 모서리를 둥글게 가공하라는 기호인 R(Radius, 예: R0.5는 반지름 0.5mm 원호)과, 모서리를 45° 각도로 비스듬히 깎으라는 기호인 C(Chamfer, 예: C1은 가로·세로 1mm씩 45° 모따기).",
+                process: "전 제품 코너 및 곡면 전극 가공·사상",
+                caution: "도면의 R0.3 지시 부위를 날카로운 직각이나 각진 C면으로 잘못 가공하면, 플라즈마 챔버 안에서 뾰족한 모서리에 전기가 집중되어 불꽃이 튀는 '아킹(Arcing) 사고'가 발생함.",
+                dialogue: "선임: \"도면에 R0.5라고 된 곳을 각지게 C면으로 깎으면 큰일 나! 챔버 안에서 각진 모서리에 번개처럼 아킹(불꽃)이 튀어서 웨이퍼 다 태운다.\""
+            },
+            {
+                no: 56,
+                category: "측정·공차",
+                termKo: "치수공차 / 가공여유",
+                termEn: "(Dimensional Tolerance / Machining Allowance)",
+                slang: "공차(플러스/마이너스), 여유량, 에칭 여유",
+                definition: "도면 기준 치수에서 허용되는 최대~최소 오차 범위(치수공차, 예: ±0.02mm)와, 다음 공정(정삭·래핑·화공 에칭)에서 깎여 나갈 양을 계산해 미리 남겨두는 치수(가공여유).",
+                process: "전 가공 공정 (황삭→정삭→래핑→에칭 치수 설계)",
+                caution: "후공정에 화공 에칭(표면이 약 0.01~0.03mm 녹아 줄어듦)이 있는 제품을 앞 공정(연삭)에서 최종 도면 치수에 딱 맞춰 깎아버리면, 에칭 후 치수가 미달(외경 축소/홀경 확대)되어 전량 불량이 됨!",
+                dialogue: "선임: \"이 파츠는 뒤에 데미지 에칭 들어가는 모델이야! 지금 연삭에서 최종 도면 치수로 다 깎아버리면 에칭에서 살 녹아서 치수 미달(마이너스 불량) 난다. 작업지시서의 '가공 후 치수(에칭 여유 포함)'를 봐야 해!\""
+            },
+
+            // ==================== Ⅵ. 불량·안전·보전 (No. 57 ~ 66) ====================
+            {
+                no: 57,
+                category: "불량·안전",
+                termKo: "치핑 / 엣지 깨짐",
+                termEn: "(Chipping / Edge Fracture)",
+                slang: "치핑, 이빠짐, 모서리 깨짐, 관통 치핑",
+                definition: "취성이 강한 실리콘·쿼츠·세라믹의 모서리나 홀 입·출구가 가공 부하 또는 취급 중 부딪힘에 의해 조개껍질 모양으로 미세하게 깨져 떨어져 나간 현장 최다 빈도 불량.",
+                process: "전 공정 공통 (가공·이동·측정·세정)",
+                caution: "작업 중 발생한 미세 치핑을 보고하지 않고 임의로 사상해서 깊게 갈아내면 그 부위만 움푹 파여 평탄도·치수 불량으로 더 큰 사고가 됨. 치핑 발견 시 즉시 작업을 멈추고 조장/품질팀에 한도 견본 판정을 요청할 것.",
+                dialogue: "선임: \"홀 입구 치핑 났는데 혼날까 봐 혼자 사상으로 깊게 갈아내면 절대 안 돼! 살짝 다듬어서 살릴 수 있는 치수인지 품질팀에 먼저 보여줘.\""
+            },
+            {
+                no: 58,
+                category: "불량·안전",
+                termKo: "크랙 / 서브서피스 데미지",
+                termEn: "(Crack / Sub-Surface Damage, SSD)",
+                slang: "크랙(실금), 내부 데미지, 까마귀 발(Crow-foot)",
+                definition: "충격이나 열응력, 과도한 절삭 부하로 인해 소재에 실금이 간 상태(크랙)와, 겉면은 매끄러워 보이지만 표면 바로 아래 수십 마이크로미터 깊이에 미세 균열이 숨어 있는 상태(서브서피스 데미지).",
+                process: "전 공정 공통 (절단·연삭·열처리·에칭)",
+                caution: "크랙이 있는 제품이 고객사 진공 챔버에 장착되면 고진공·고온 플라즈마 환경에서 폭발하듯 깨져 수억 원대 장비를 파손시킴. 에칭 후 까마귀 발 모양의 잠재 크랙이 올라오는지 암실 검사를 철저히 해야 함.",
+                dialogue: "선임: \"치핑은 사상으로 살릴 수 있어도, 실금(크랙) 간 제품은 절대 출하되면 안 돼! 챔버 안에서 터지면 대형 참사다.\""
+            },
+            {
+                no: 59,
+                category: "불량·안전",
+                termKo: "스크래치 / 혜성 자국",
+                termEn: "(Scratch / Comet Mark)",
+                slang: "기스(스크래치), 실기스, 혜성 기스",
+                definition: "연마 패드나 작업대, 와이퍼에 낀 단단한 이물 입자에 의해 제품 표면에 선 모양으로 긁힌 상처(스크래치)나, 폴리싱 중 이물이 구르며 혜성 꼬리 모양으로 파인 자국(Comet Mark).",
+                process: "래핑·폴리싱·사상·세정·검사",
+                caution: "작업대 위에서 제품을 살짝이라도 옆으로 끄는 행위(Sliding)가 스크래치 불량의 80%를 차지함. 제품을 옮길 때는 반드시 수직으로 들어 올린 뒤 이동하여 수직으로 내려놓아야 함.",
+                dialogue: "선임: \"경면 폴리싱 끝난 제품을 작업대 위에서 1cm만 끌어도 바닥 먼지에 긁혀서 실기스 쫙 난다! 무조건 수직으로 들었다가 수직으로 내려놔.\""
+            },
+            {
+                no: 60,
+                category: "불량·안전",
+                termKo: "툴마크 / 가공 단차",
+                termEn: "(Tool Mark / Machining Step)",
+                slang: "툴 자국, 단차, 결 자국, 채터링(떨림 자국)",
+                definition: "연삭 휠이나 엔드밀이 지나간 경로에 계단 모양의 층(단차)이 지거나, 스핀들 진동(채터링)으로 인해 표면에 빗살무늬·회오리 모양의 거친 공구 자국이 남은 불량.",
+                process: "MCT·평면/원통 연삭·사상",
+                caution: "황삭 휠에서 정삭 휠로 넘어갈 때 이전 툴마크 깊이만큼 충분히 깎아내지 못하면 정삭 후에도 줄무늬가 그대로 남음. 또한 수작업 사상 시 한 곳만 깊게 파내도 수작업 단차 불량이 됨.",
+                dialogue: "선임: \"표면에 휠 지나간 줄무늬(툴마크)가 깊게 남았네. 스핀들 진동(채터링) 없는지 확인하고 사상에서 단차 안 지게 고르게 잡아줘.\""
+            },
+            {
+                no: 61,
+                category: "불량·안전",
+                termKo: "보우 / 워프 / 롤오프",
+                termEn: "(Bow / Warp / Edge Roll-off)",
+                slang: "보우(오목/볼록 휨), 워프(뒤틀림), 롤오프(외곽 처짐)",
+                definition: "원판이나 링이 접시처럼 오목·볼록하게 휘어진 현상(보우), 프로펠러처럼 비틀어진 현상(워프), 그리고 래핑·폴리싱 시 제품 가장자리 끝단 두께만 급격히 얇아지며 처지는 현상(롤오프).",
+                process: "와이어 쏘잉·박판 연삭·래핑·폴리싱",
+                caution: "한쪽 면만 한꺼번에 많이 연삭하면 양면의 잔류 응력 균형이 깨져 제품이 활처럼 휘어버림(트와이만 효과). 얇은 평판이나 링은 반드시 앞·뒤 면을 번갈아 가며 조금씩 대칭 가공(교번 연삭)해야 함.",
+                dialogue: "선임: \"얇은 실리콘 원판 한쪽 면만 계속 깎으면 응력 때문에 반대쪽으로 확 휘어버려(보우 불량)! 반드시 앞뒤 뒤집어가며 대칭으로 깎아.\""
+            },
+            {
+                no: 62,
+                category: "불량·안전",
+                termKo: "버닝 / 리캐스트층 / 백화",
+                termEn: "(Grinding Burn / Recast Layer / Devitrification)",
+                slang: "버닝(탄 자국), 리캐스트(열변질층), 쿼츠 백화",
+                definition: "절삭유 부족이나 휠 눈메움으로 인한 마찰열로 가공면이 검게 타며 미세 크랙이 간 현상(버닝), 레이저 열에 녹았다 굳은 변질층(리캐스트), 화염연마 시 지문·오염물이 타며 쿼츠가 하얗게 불투명해지는 현상(백화).",
+                process: "연삭·레이저 타공·쿼츠 화염연마",
+                caution: "세 가지 모두 열(Heat) 관리 실패로 발생하는 치명적 표면 변질 불량임. 연삭 시 절삭유 노즐 위치를 항상 가공점에 맞추고, 쿼츠는 화염연마 전 알코올 탈지 세정을 철저히 수행해야 함.",
+                dialogue: "선임: \"연삭면에 거뭇거뭇하게 무지개빛 탄 자국(버닝) 올라오면 그 밑은 열충격으로 이미 다 금 가 있는 거야! 절삭유 노즐 각도부터 바로잡아.\""
+            },
+            {
+                no: 63,
+                category: "불량·안전",
+                termKo: "워터마크 / 파티클 오염",
+                termEn: "(Water Mark / Particle Contamination)",
+                slang: "워터마크(물자국/물얼룩), 파티클(먼지/이물), 지문 얼룩",
+                definition: "세정 후 물방울이 자연 증발하면서 물속 미네랄·실리카 성분이 둥근 테두리 얼룩으로 말라붙은 불량(워터마크)과, 홀 내부나 표면에 가공 슬러지·먼지가 남아 있는 오염(파티클).",
+                process: "세정·건조·암실검사·포장",
+                caution: "한번 말라붙은 실리콘·쿼츠 워터마크는 알코올로 닦아도 절대 지워지지 않으며 재연마나 재에칭을 해야만 제거됨! 세정조에서 건져 올린 후 표면이 마르기 전에 즉시 DI 샤워와 에어블로우를 완료해야 함.",
+                dialogue: "선임: \"세정 끝난 제품을 젖은 채로 공기 중에 방치하면 물방울 마르면서 워터마크(물얼룩) 생겨! 한번 생기면 알코올로 안 지워지니까 바로 에어 불어!\""
+            },
+            {
+                no: 64,
+                category: "불량·안전",
+                termKo: "홀 미관통 / 미에칭",
+                termEn: "(Incomplete Hole / Under-Etching)",
+                slang: "미관통(막힌 홀), 미에칭(덜 녹음), 슬러지 막힘",
+                definition: "샤워헤드 등의 미세홀이 끝까지 뚫리지 않았거나 홀 안에 왁스·연마 슬러지가 굳어 막혀 있는 상태(미관통)와, 기포나 오염물 때문에 약액이 닿지 않아 홀 내부나 표면이 덜 에칭된 불량(미에칭).",
+                process: "미세홀 가공·홀 사상·홀 에칭·최종 검사",
+                caution: "수천 개의 홀 중 단 1개만 막혀 있어도 고객사 반도체 웨이퍼 그 위치에 가스가 분사되지 않아 수백 장의 웨이퍼가 연속 불량 처리됨! 암실 백열등 투과 검사 및 에어건 소통 확인을 전수 실시할 것.",
+                dialogue: "선임: \"샤워헤드 구멍 2,000개 중에 딱 1개만 막혀(미관통) 있어도 불량 웨이퍼가 쏟아져 나온다! 백열등 위에 올려서 빛 안 나오는 구멍 있는지 눈 부릅뜨고 찾아.\""
+            },
+            {
+                no: 65,
+                category: "불량·안전",
+                termKo: "로트 추적성 / 작업표준서",
+                termEn: "(Lot Traceability / Standard Operating Procedure, SOP)",
+                slang: "로트 번호(Lot No.), 작업표준서(SOP), 공정 이동표(전표)",
+                definition: "원소재 잉곳부터 절단·가공·세정·출하까지 어느 설비에서 누가 어떤 조건으로 작업했는지 역추적할 수 있는 고유 이력 번호(로트 추적성)와, 공정별 정해진 작업 순서·조건·안전 수칙을 적은 지침서(SOP).",
+                process: "전 부서·전 공정 필수 기본 수칙",
+                caution: "서로 다른 로트(Lot)의 제품을 임의로 섞거나 공정 이동표(전표) 없이 작업하는 행위, 그리고 숙련자라고 해서 작업표준서(SOP)의 조건을 임의 변경하는 행위는 품질 시스템상 중대 위반임.",
+                dialogue: "선임: \"외관이 똑같아 보여도 로트 번호(Lot No.)가 다르면 원소재 잉곳이 다른 거야! 절대 바스켓에 섞어 담지 말고 항상 공정 이동표(전표)랑 세트로 움직여.\""
+            },
+            {
+                no: 66,
+                category: "불량·안전",
+                termKo: "설비 예방보전 / 안전보호구",
+                termEn: "(PM·BM Maintenance / Personal Protective Equipment, PPE)",
+                slang: "피엠(PM/예방점검), 비엠(BM/고장수리), 보호구(PPE), 인터록",
+                definition: "설비가 고장 나기 전에 절삭유 농도·필터·스핀들·정반을 주기적으로 점검·교체하는 활동(예방보전, PM), 고장 후 수리하는 활동(사후보전, BM), 그리고 작업자의 생명을 지키는 안전보호구(PPE) 및 안전문 잠금장치(인터록).",
+                process: "전 현장 작업자 일일 필수 안전·설비 수칙",
+                caution: "가공 중인 회전체(MCT 스핀들, 래핑 정반, 원통 연삭기)에 면장갑을 끼고 손을 대면 장갑이 말려 들어가는 협착 사고가 발생함! 설비 가동 중 안전문(인터록) 임의 해제 절대 금지, 화공 약품 취급 시 내산 보호구 및 국소배기장치(스크러버) 가동 상태를 최우선 확인할 것.",
+                dialogue: "선임: \"아무리 급해도 회전하는 스핀들이나 연삭 휠 멈추기 전에 절대 손 넣지 마! 안전문 인터록 임의로 풀고 작업하는 건 내 목숨을 거는 행위야.\""
+            }
+        ];
+
+        // ==========================================
+        // 상태 관리 (LocalStorage 연동)
+        // ==========================================
+        let learnedTerms = new Set(JSON.parse(localStorage.getItem('onboarding_learned_66') || '[]'));
+        let bookmarkedTerms = new Set(JSON.parse(localStorage.getItem('onboarding_bookmark_66') || '[]'));
+        let currentCategoryFilter = 'ALL';
+        let currentModalTermNo = 1;
+
+        // 플래시카드 상태
+        let fcDeck = [...GLOSSARY_DATA];
+        let fcIndex = 0;
+        let fcFlipped = false;
+
+        // 퀴즈 상태
+        let quizQuestions = [];
+        let quizCurrentIdx = 0;
+        let quizScore = 0;
+        let quizAnswered = false;
+
+        // 카테고리 메타데이터
+        const CATEGORIES = [
+            { id: 'ALL', label: '전체 66선', icon: 'fa-layer-group', color: 'blue' },
+            { id: '소재', label: 'Ⅰ. 소재 (6)', icon: 'fa-cubes', color: 'sky' },
+            { id: '제품', label: 'Ⅱ. 제품 파츠 (7)', icon: 'fa-microchip', color: 'indigo' },
+            { id: '소재가공', label: 'Ⅲ. 소재가공 (19)', icon: 'fa-gears', color: 'amber' },
+            { id: '에칭·세정', label: 'Ⅳ. 에칭·세정·포장 (12)', icon: 'fa-flask-vial', color: 'teal' },
+            { id: '측정·공차', label: 'Ⅴ. 측정·기하공차 (12)', icon: 'fa-ruler-combined', color: 'purple' },
+            { id: '불량·안전', label: 'Ⅵ. 불량·안전·보전 (10)', icon: 'fa-triangle-exclamation', color: 'rose' }
+        ];
+
+        // 카테고리별 뱃지 색상 헬퍼
+        function getCategoryBadgeStyle(category) {
+            const styles = {
+                '소재': 'bg-sky-100 text-sky-800 border-sky-200',
+                '제품': 'bg-indigo-100 text-indigo-800 border-indigo-200',
+                '소재가공': 'bg-amber-100 text-amber-800 border-amber-200',
+                '에칭·세정': 'bg-teal-100 text-teal-800 border-teal-200',
+                '측정·공차': 'bg-purple-100 text-purple-800 border-purple-200',
+                '불량·안전': 'bg-rose-100 text-rose-800 border-rose-200'
+            };
+            return styles[category] || 'bg-slate-100 text-slate-800 border-slate-200';
+        }
+
+        // ==========================================
+        // 초기화 및 탭 전환
+        // ==========================================
+        window.onload = function () {
+            selectChamberPart(7); // 초기 챔버 파츠 #7 샤워헤드 표시
+            renderCategoryFilterBar();
+            renderGlossaryCards();
+            renderSlangTable();
+            initFlashcards();
+            startNewQuiz(10);
+            updateProgressUI();
+
+            // 키보드 단축키 (모달 닫기, 플래시카드 조작)
+            document.addEventListener('keydown', function (e) {
+                const modal = document.getElementById('termDetailModal');
+                if (!modal.classList.contains('hidden')) {
+                    if (e.key === 'Escape') closeTermModal();
+                    if (e.key === 'ArrowRight') navigateModalTerm(1);
+                    if (e.key === 'ArrowLeft') navigateModalTerm(-1);
+                    return;
+                }
+                const fcSection = document.getElementById('tab-flashcard');
+                if (!fcSection.classList.contains('hidden')) {
+                    if (e.code === 'Space') {
+                        e.preventDefault();
+                        flipFlashcard();
+                    } else if (e.key === 'ArrowRight') {
+                        nextFlashcard();
+                    } else if (e.key === 'ArrowLeft') {
+                        prevFlashcard();
+                    }
+                }
+            });
+        };
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden'));
+            const target = document.getElementById('tab-' + tabId);
+            if (target) target.classList.remove('hidden');
+
+            document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+                btn.className = 'nav-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap flex items-center gap-2 transition text-slate-300 hover:bg-slate-800';
+            });
+            const activeBtn = document.getElementById('tabBtn-' + tabId);
+            if (activeBtn) {
+                activeBtn.className = 'nav-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap flex items-center gap-2 transition bg-blue-600 text-white shadow-sm';
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ==========================================
+        // 학습 진도율 저장 및 UI 업데이트
+        // ==========================================
+        function saveProgress() {
+            localStorage.setItem('onboarding_learned_66', JSON.stringify([...learnedTerms]));
+            localStorage.setItem('onboarding_bookmark_66', JSON.stringify([...bookmarkedTerms]));
+            updateProgressUI();
+        }
+
+        function updateProgressUI() {
+            const total = GLOSSARY_DATA.length;
+            const count = learnedTerms.size;
+            const pct = Math.round((count / total) * 100);
+
+            document.getElementById('headerProgressCount').textContent = `${count} / ${total} (${pct}%)`;
+            document.getElementById('headerProgressBar').style.width = `${pct}%`;
+            document.getElementById('mobileProgressText').textContent = `${count}/${total}`;
+        }
+
+        function toggleLearned(no, event) {
+            if (event) event.stopPropagation();
+            if (learnedTerms.has(no)) {
+                learnedTerms.delete(no);
+                showToast(`#${no} 용어를 미학습 상태로 변경했습니다.`);
+            } else {
+                learnedTerms.add(no);
+                showToast(`#${no} 용어 학습 완료! 진도율이 올라갔습니다.`);
+            }
+            saveProgress();
+            renderGlossaryCards();
+            if (!document.getElementById('termDetailModal').classList.contains('hidden')) {
+                openTermModal(no);
+            }
+        }
+
+        function toggleBookmark(no, event) {
+            if (event) event.stopPropagation();
+            if (bookmarkedTerms.has(no)) {
+                bookmarkedTerms.delete(no);
+                showToast(`#${no} 용어 중요 별표를 해제했습니다.`);
+            } else {
+                bookmarkedTerms.add(no);
+                showToast(`⭐ #${no} 용어를 중요 복습 목록에 추가했습니다.`);
+            }
+            saveProgress();
+            renderGlossaryCards();
+            if (!document.getElementById('termDetailModal').classList.contains('hidden')) {
+                openTermModal(no);
+            }
+        }
+
+        function resetAllProgress() {
+            learnedTerms.clear();
+            bookmarkedTerms.clear();
+            saveProgress();
+            renderGlossaryCards();
+            initFlashcards();
+            showToast('모든 학습 진도와 별표 목록이 초기화되었습니다.');
+        }
+
+        // ==========================================
+        // TAB 1: 인터랙티브 식각 챔버 단면도 브리핑
+        // ==========================================
+        function selectChamberPart(no) {
+            document.querySelectorAll('.chamber-part').forEach(el => el.classList.remove('active-part'));
+            const svgEl = document.getElementById('svg-part-' + no);
+            if (svgEl) svgEl.classList.add('active-part');
+            if (no === 13) {
+                const baffleEl = document.getElementById('svg-part-13-baffle');
+                if (baffleEl) baffleEl.classList.add('active-part');
+            }
+
+            const item = GLOSSARY_DATA.find(d => d.no === no) || GLOSSARY_DATA[6];
+            const panel = document.getElementById('chamberDetailPanel');
+            panel.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <span class="px-3 py-1 rounded-full bg-blue-600 text-white text-xs font-extrabold">챔버 핵심 파츠 #${item.no}</span>
+                    <span class="text-xs font-bold text-slate-500">${item.process}</span>
+                </div>
+                <div>
+                    <h4 class="text-xl font-extrabold text-slate-900">${item.termKo}</h4>
+                    <p class="text-xs font-semibold text-slate-500 mt-0.5">${item.termEn}</p>
+                </div>
+                <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs">
+                    <span class="font-extrabold text-amber-800"><i class="fa-solid fa-comments mr-1"></i>현장 호칭(은어):</span>
+                    <span class="font-bold text-slate-800 ml-1">${item.slang}</span>
+                </div>
+                <div class="space-y-1.5">
+                    <div class="text-xs font-extrabold text-slate-700">📘 기초 입문자용 역할 설명</div>
+                    <p class="text-sm text-slate-700 leading-relaxed bg-white p-3.5 rounded-xl border border-slate-200">${item.definition}</p>
+                </div>
+                <div class="p-3.5 rounded-xl bg-red-50 border border-red-200 space-y-1">
+                    <div class="text-xs font-extrabold text-red-600"><i class="fa-solid fa-triangle-exclamation mr-1"></i>현장 작업 시 절대 주의사항</div>
+                    <p class="text-xs text-red-900 leading-relaxed font-medium">${item.caution}</p>
+                </div>
+                <div class="pt-2 flex items-center justify-between gap-2">
+                    <button onclick="openTermModal(${item.no})" class="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-blue-600 text-white text-xs sm:text-sm font-bold transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                        <span>시각 도해 & 선임 대화 예시 자세히 보기</span>
+                    </button>
+                </div>
+            `;
+        }
+
+        function filterGlossaryByProcess(keyword) {
+            switchTab('glossary');
+            currentCategoryFilter = 'ALL';
+            document.getElementById('glossarySearchInput').value = keyword;
+            renderCategoryFilterBar();
+            renderGlossaryCards();
+            showToast(`'${keyword}' 공정 관련 용어를 필터링했습니다.`);
+        }
+
+        function filterGlossaryByCategory(cat) {
+            switchTab('glossary');
+            currentCategoryFilter = cat;
+            document.getElementById('glossarySearchInput').value = '';
+            renderCategoryFilterBar();
+            renderGlossaryCards();
+            showToast(`'${cat}' 카테고리 용어를 표시합니다.`);
+        }
+
+        // ==========================================
+        // TAB 2: 66개 현장 용어 도감 렌더링 & 필터링
+        // ==========================================
+        function renderCategoryFilterBar() {
+            const bar = document.getElementById('categoryFilterBar');
+            bar.innerHTML = CATEGORIES.map(cat => {
+                const active = currentCategoryFilter === cat.id;
+                return `
+                    <button onclick="setCategoryFilter('${cat.id}')" class="px-3.5 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap flex items-center gap-1.5 transition ${active ? 'bg-slate-900 text-white shadow-sm' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}">
+                        <i class="fa-solid ${cat.icon} ${active ? 'text-amber-400' : 'text-slate-500'}"></i>
+                        <span>${cat.label}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function setCategoryFilter(catId) {
+            currentCategoryFilter = catId;
+            renderCategoryFilterBar();
+            renderGlossaryCards();
+        }
+
+        function clearSearch() {
+            document.getElementById('glossarySearchInput').value = '';
+            renderGlossaryCards();
+        }
+
+        function getFilteredGlossary() {
+            const query = (document.getElementById('glossarySearchInput')?.value || '').trim().toLowerCase();
+            const matFilter = document.getElementById('materialFilterSelect')?.value || 'ALL';
+            const statusFilter = document.getElementById('statusFilterSelect')?.value || 'ALL';
+
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (clearBtn) {
+                clearBtn.classList.toggle('hidden', query.length === 0);
+            }
+
+            return GLOSSARY_DATA.filter(item => {
+                if (currentCategoryFilter !== 'ALL' && item.category !== currentCategoryFilter) return false;
+
+                if (matFilter !== 'ALL') {
+                    const procText = (item.process + ' ' + item.termKo + ' ' + item.termEn).toLowerCase();
+                    if (matFilter === '공통') {
+                        if (!procText.includes('공통') && !procText.includes('전 소재') && !procText.includes('전 공정')) return false;
+                    } else if (!procText.includes(matFilter.toLowerCase())) {
+                        return false;
+                    }
+                }
+
+                if (statusFilter === 'UNLEARNED' && learnedTerms.has(item.no)) return false;
+                if (statusFilter === 'LEARNED' && !learnedTerms.has(item.no)) return false;
+                if (statusFilter === 'BOOKMARKED' && !bookmarkedTerms.has(item.no)) return false;
+
+                if (query) {
+                    const hay = `${item.no} ${item.category} ${item.termKo} ${item.termEn} ${item.slang} ${item.definition} ${item.process} ${item.caution}`.toLowerCase();
+                    if (!hay.includes(query)) return false;
+                }
+                return true;
+            });
+        }
+
+        function renderGlossaryCards() {
+            const list = getFilteredGlossary();
+            document.getElementById('filteredTermCount').textContent = list.length;
+            const grid = document.getElementById('glossaryGrid');
+
+            if (list.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full bg-white rounded-2xl p-12 text-center border border-slate-200 space-y-3">
+                        <i class="fa-solid fa-magnifying-glass text-3xl text-slate-300"></i>
+                        <h4 class="text-base font-extrabold text-slate-800">조건에 맞는 현장 용어가 없습니다.</h4>
+                        <p class="text-xs text-slate-500">검색어나 필터 조건을 초기화해 보세요.</p>
+                        <button onclick="resetFilters()" class="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold">필터 전체 초기화</button>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = list.map(item => {
+                const isLearned = learnedTerms.has(item.no);
+                const isBookmarked = bookmarkedTerms.has(item.no);
+                const badgeClass = getCategoryBadgeStyle(item.category);
+
+                return `
+                    <article onclick="openTermModal(${item.no})" class="cursor-pointer group bg-white rounded-2xl p-5 border-2 transition flex flex-col justify-between shadow-sm hover:shadow-md ${isLearned ? 'border-emerald-500/60 bg-emerald-50/10' : 'border-slate-200 hover:border-blue-500'}">
+                        <div>
+                            <!-- 카드 상단: 번호, 카테고리, 별표, 학습완료 -->
+                            <div class="flex items-center justify-between gap-2 mb-3">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="px-2 py-0.5 rounded-md bg-slate-900 text-white text-xs font-extrabold">#${String(item.no).padStart(2, '0')}</span>
+                                    <span class="px-2.5 py-0.5 rounded-md border text-xs font-bold ${badgeClass}">${item.category}</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <button onclick="toggleBookmark(${item.no}, event)" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center transition" title="중요 별표">
+                                        <i class="${isBookmarked ? 'fa-solid text-amber-400' : 'fa-regular text-slate-400'} fa-star"></i>
+                                    </button>
+                                    <button onclick="toggleLearned(${item.no}, event)" class="px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 ${isLearned ? 'bg-emerald-600 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-600'}" title="학습 완료 체크">
+                                        <i class="fa-solid fa-check"></i>
+                                        <span>${isLearned ? '완료' : '미학습'}</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 표준 용어명 & 영문명 -->
+                            <h3 class="text-lg font-extrabold text-slate-900 group-hover:text-blue-600 transition leading-snug">
+                                ${item.termKo}
+                            </h3>
+                            <p class="text-xs font-semibold text-slate-400 mt-0.5">${item.termEn}</p>
+
+                            <!-- 현장 호칭 / 은어 배지 -->
+                            <div class="mt-3 p-2.5 rounded-xl bg-amber-50/90 border border-amber-200/80 text-xs">
+                                <span class="font-extrabold text-amber-800"><i class="fa-solid fa-ear-listen mr-1"></i>현장 호칭:</span>
+                                <span class="font-bold text-slate-800 ml-1">${item.slang}</span>
+                            </div>
+
+                            <!-- 작업자용 핵심 정의 -->
+                            <p class="text-xs sm:text-sm text-slate-700 mt-3 leading-relaxed">
+                                ${item.definition}
+                            </p>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-t border-slate-100 space-y-2.5">
+                            <!-- 적용 소재·공정 -->
+                            <div class="flex items-center justify-between text-[11px] font-bold text-slate-500">
+                                <span><i class="fa-solid fa-industry text-slate-400 mr-1"></i>${item.process}</span>
+                                <span class="text-blue-600 group-hover:translate-x-0.5 transition">시각 도해 보기 →</span>
+                            </div>
+
+                            <!-- 현장 주의사항 Red Box -->
+                            <div class="p-3 rounded-xl bg-red-50 border border-red-200/90 text-xs text-red-900 leading-relaxed">
+                                <strong class="text-red-600 font-extrabold mr-1"><i class="fa-solid fa-triangle-exclamation"></i> 주의:</strong>
+                                ${item.caution}
+                            </div>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        function resetFilters() {
+            currentCategoryFilter = 'ALL';
+            document.getElementById('glossarySearchInput').value = '';
+            document.getElementById('materialFilterSelect').value = 'ALL';
+            document.getElementById('statusFilterSelect').value = 'ALL';
+            renderCategoryFilterBar();
+            renderGlossaryCards();
+        }
+
+        function markVisibleLearned() {
+            const list = getFilteredGlossary();
+            list.forEach(item => learnedTerms.add(item.no));
+            saveProgress();
+            renderGlossaryCards();
+            showToast(`현재 목록의 ${list.length}개 용어를 모두 학습 완료 처리했습니다!`);
+        }
+
+        // ==========================================
+        // 용어 상세 모달 (시각적 SVG 도해 자동 생성 + TTS 발음 + 선임 대화)
+        // ==========================================
+        function getVisualDiagramSVG(item) {
+            // 기초 지식이 없는 신입사원이 직관적으로 이해할 수 있도록 카테고리/용어별 맞춤 SVG 도해를 생성
+            if (item.category === '소재') {
+                return `
+                    <svg viewBox="0 0 420 130" class="w-full h-auto bg-slate-900 rounded-2xl p-3 border border-slate-800">
+                        <rect x="15" y="20" width="95" height="90" rx="10" fill="#334155" stroke="#94a3b8" stroke-width="2"/>
+                        <text x="62" y="60" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">원소재 모재</text>
+                        <text x="62" y="80" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold">고경도·취성(유리질)</text>
+                        <path d="M125,65 L165,65" stroke="#f59e0b" stroke-width="3" marker-end="url(#arrow)"/>
+                        <rect x="175" y="20" width="105" height="90" rx="10" fill="#1e3a8a" stroke="#60a5fa" stroke-width="2"/>
+                        <text x="227" y="55" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="bold">다이아몬드 가공</text>
+                        <text x="227" y="75" text-anchor="middle" fill="#93c5fd" font-size="10">전용 쿨런트·세정</text>
+                        <rect x="295" y="20" width="110" height="90" rx="10" fill="#7f1d1d" stroke="#f87171" stroke-width="2"/>
+                        <text x="350" y="55" text-anchor="middle" fill="#fecaca" font-size="11" font-weight="bold">⚠️ 충격·오투입 금지</text>
+                        <text x="350" y="75" text-anchor="middle" fill="#ffffff" font-size="10">치핑 / 화학부식 주의</text>
+                    </svg>
+                `;
+            } else if (item.category === '제품') {
+                return `
+                    <svg viewBox="0 0 420 130" class="w-full h-auto bg-slate-900 rounded-2xl p-3 border border-slate-800">
+                        <rect x="40" y="18" width="340" height="24" rx="5" fill="#3b82f6"/>
+                        <text x="210" y="34" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">상부 샤워헤드 / 전극 (미세 가스홀)</text>
+                        <ellipse cx="210" cy="63" rx="140" ry="16" fill="#a855f7" fill-opacity="0.35"/>
+                        <text x="210" y="67" text-anchor="middle" fill="#e9d5ff" font-size="10" font-weight="bold">⚡ 플라즈마 반응 영역</text>
+                        <rect x="125" y="85" width="170" height="8" fill="#facc15"/>
+                        <rect x="80" y="82" width="42" height="16" rx="3" fill="#f97316"/>
+                        <rect x="298" y="82" width="42" height="16" rx="3" fill="#f97316"/>
+                        <rect x="110" y="96" width="200" height="22" rx="4" fill="#10b981"/>
+                        <text x="210" y="111" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">하부 정전척(ESC) + 포커스링(FR) 외곽 감싸기</text>
+                    </svg>
+                `;
+            } else if (item.category === '소재가공') {
+                return `
+                    <svg viewBox="0 0 420 130" class="w-full h-auto bg-slate-900 rounded-2xl p-3 border border-slate-800">
+                        <rect x="70" y="78" width="280" height="32" rx="4" fill="#0284c7" stroke="#7dd3fc" stroke-width="1.5"/>
+                        <text x="210" y="98" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">진공척(버큠) / 왁스 마운팅 베이스 (이물 제로 필수)</text>
+                        <rect x="105" y="52" width="210" height="24" rx="3" fill="#e2e8f0" stroke="#94a3b8"/>
+                        <text x="210" y="68" text-anchor="middle" fill="#0f172a" font-size="11" font-weight="bold">피가공물 (황삭 여유량 → 정삭 → 사상)</text>
+                        <circle cx="210" cy="28" r="18" fill="#f59e0b" stroke="#fef08a" stroke-width="2"/>
+                        <text x="210" y="32" text-anchor="middle" fill="#0f172a" font-size="9" font-weight="bold">다이아툴</text>
+                    </svg>
+                `;
+            } else if (item.category === '에칭·세정') {
+                return `
+                    <svg viewBox="0 0 420 130" class="w-full h-auto bg-slate-900 rounded-2xl p-3 border border-slate-800">
+                        <rect x="15" y="25" width="90" height="80" rx="8" fill="#be123c"/>
+                        <text x="60" y="60" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">1. 약액 에칭</text>
+                        <text x="60" y="78" text-anchor="middle" fill="#fecdd3" font-size="9">내산보호구 필수</text>
+                        <rect x="115" y="25" width="90" height="80" rx="8" fill="#0284c7"/>
+                        <text x="160" y="60" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">2. 초순수(DI)</text>
+                        <text x="160" y="78" text-anchor="middle" fill="#bae6fd" font-size="9">비저항 수질 확인</text>
+                        <rect x="215" y="25" width="90" height="80" rx="8" fill="#0d9488"/>
+                        <text x="260" y="60" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">3. 에어·건조</text>
+                        <text x="260" y="78" text-anchor="middle" fill="#99f6e4" font-size="9">노즐 5cm 거리유지</text>
+                        <rect x="315" y="25" width="90" height="80" rx="8" fill="#4f46e5"/>
+                        <text x="360" y="60" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">4. 2중 진공포장</text>
+                        <text x="360" y="78" text-anchor="middle" fill="#c7d2fe" font-size="9">외곽 파지·클린룸</text>
+                    </svg>
+                `;
+            } else if (item.category === '측정·공차') {
+                return `
+                    <svg viewBox="0 0 420 130" class="w-full h-auto bg-slate-900 rounded-2xl p-3 border border-slate-800">
+                        <circle cx="95" cy="65" r="42" fill="none" stroke="#38bdf8" stroke-width="3" stroke-dasharray="4,2"/>
+                        <circle cx="95" cy="65" r="24" fill="none" stroke="#f43f5e" stroke-width="2.5"/>
+                        <circle cx="95" cy="65" r="3" fill="#facc15"/>
+                        <text x="95" y="120" text-anchor="middle" fill="#cbd5e1" font-size="10" font-weight="bold">진원도(○) · 동심도(◎)</text>
+                        <line x1="185" y1="42" x2="385" y2="42" stroke="#4ade80" stroke-width="3"/>
+                        <line x1="185" y1="82" x2="385" y2="82" stroke="#4ade80" stroke-width="3"/>
+                        <text x="285" y="66" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="bold">평탄도(⏥) · 평행도(//) · 공차(±)</text>
+                        <text x="285" y="108" text-anchor="middle" fill="#fde047" font-size="10">측정기 영점 확인 & 제품에 충격/끌림 절대 금지</text>
+                    </svg>
+                `;
+            } else {
+                return `
+                    <svg viewBox="0 0 420 130" class="w-full h-auto bg-slate-900 rounded-2xl p-3 border border-slate-800">
+                        <rect x="25" y="25" width="175" height="80" rx="10" fill="#881337" stroke="#fb7185" stroke-width="2"/>
+                        <text x="112" y="56" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold">🚨 5대 치명 불량</text>
+                        <text x="112" y="78" text-anchor="middle" fill="#fecdd3" font-size="10">치핑·크랙·기스·버닝·워터마크</text>
+                        <rect x="220" y="25" width="175" height="80" rx="10" fill="#065f46" stroke="#34d399" stroke-width="2"/>
+                        <text x="307" y="56" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold">🛡️ 작업자 3대 철칙</text>
+                        <text x="307" y="78" text-anchor="middle" fill="#a7f3d0" font-size="10">SOP 준수 · 로트추적 · 인터록/PPE</text>
+                    </svg>
+                `;
+            }
+        }
+
+        function openTermModal(no) {
+            currentModalTermNo = no;
+            const item = GLOSSARY_DATA.find(d => d.no === no);
+            if (!item) return;
+
+            const isLearned = learnedTerms.has(item.no);
+            const isBookmarked = bookmarkedTerms.has(item.no);
+            const badgeClass = getCategoryBadgeStyle(item.category);
+
+            const content = document.getElementById('modalContentArea');
+            content.innerHTML = `
+                <div class="flex flex-wrap items-center gap-2 pr-10">
+                    <span class="px-2.5 py-1 rounded-lg bg-slate-900 text-white text-xs font-extrabold">No. ${String(item.no).padStart(2, '0')} / 66</span>
+                    <span class="px-3 py-1 rounded-lg border text-xs font-extrabold ${badgeClass}">${item.category}</span>
+                    <span class="px-3 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold"><i class="fa-solid fa-industry mr-1"></i>${item.process}</span>
+                </div>
+
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                    <div>
+                        <h3 class="text-2xl font-extrabold text-slate-900">${item.termKo}</h3>
+                        <p class="text-sm font-semibold text-slate-500 mt-0.5">${item.termEn}</p>
+                    </div>
+                    <button onclick="speakTerm(${item.no})" class="self-start sm:self-center px-3.5 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-extrabold flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-volume-high"></i>
+                        <span>용어·은어 음성 듣기</span>
+                    </button>
+                </div>
+
+                <!-- 현장 호칭 하이라이트 -->
+                <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 mt-0.5">
+                        <i class="fa-solid fa-ear-listen"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-extrabold text-amber-800 uppercase">현장 작업자 호칭 / 은어 (이렇게 부릅니다)</div>
+                        <div class="text-base font-extrabold text-slate-900 mt-0.5">${item.slang}</div>
+                    </div>
+                </div>
+
+                <!-- 시각적 이해 도해 SVG -->
+                <div class="space-y-1.5">
+                    <div class="text-xs font-extrabold text-slate-500 uppercase"><i class="fa-solid fa-eye mr-1"></i>신규 입사자용 직관적 시각 도해</div>
+                    ${getVisualDiagramSVG(item)}
+                </div>
+
+                <!-- 작업자용 핵심 정의 -->
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+                    <div class="text-xs font-extrabold text-blue-700"><i class="fa-solid fa-book-open mr-1"></i>기초 지식이 없어도 바로 이해하는 핵심 정의</div>
+                    <p class="text-sm sm:text-base text-slate-800 leading-relaxed font-medium">${item.definition}</p>
+                </div>
+
+                <!-- 현장 작업 시 절대 주의사항 (Red-Line Box) -->
+                <div class="p-4 rounded-2xl bg-red-50 border-2 border-red-200 space-y-1">
+                    <div class="text-xs font-extrabold text-red-600"><i class="fa-solid fa-triangle-exclamation mr-1"></i>현장 작업 시 절대 주의사항 (불량·안전 Red-Line)</div>
+                    <p class="text-sm sm:text-base text-red-950 leading-relaxed font-bold">${item.caution}</p>
+                </div>
+
+                <!-- 선임 작업자의 실전 한마디 -->
+                <div class="p-4 rounded-2xl bg-slate-900 text-white space-y-1">
+                    <div class="text-xs font-extrabold text-amber-400"><i class="fa-solid fa-helmet-safety mr-1"></i>현장 선임 작업자의 실전 대화 예시</div>
+                    <p class="text-sm text-slate-100 leading-relaxed">${item.dialogue}</p>
+                </div>
+
+                <!-- 모달 하단 액션 바 -->
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-200">
+                    <div class="flex items-center gap-2">
+                        <button onclick="navigateModalTerm(-1)" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">
+                            <i class="fa-solid fa-chevron-left mr-1"></i>이전 용어
+                        </button>
+                        <button onclick="navigateModalTerm(1)" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">
+                            다음 용어<i class="fa-solid fa-chevron-right ml-1"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button onclick="toggleBookmark(${item.no})" class="px-3.5 py-2 rounded-xl border text-xs font-bold transition ${isBookmarked ? 'bg-amber-50 border-amber-300 text-amber-800' : 'bg-white border-slate-300 text-slate-700'}">
+                            <i class="${isBookmarked ? 'fa-solid text-amber-500' : 'fa-regular'} fa-star mr-1"></i>중요 별표
+                        </button>
+                        <button onclick="toggleLearned(${item.no})" class="px-4 py-2 rounded-xl text-xs font-extrabold transition ${isLearned ? 'bg-emerald-600 text-white' : 'bg-blue-600 hover:bg-blue-500 text-white'}">
+                            <i class="fa-solid fa-check mr-1"></i>${isLearned ? '학습 완료됨' : '학습 완료 체크'}
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('termDetailModal').classList.remove('hidden');
+        }
+
+        function navigateModalTerm(delta) {
+            let nextNo = currentModalTermNo + delta;
+            if (nextNo < 1) nextNo = GLOSSARY_DATA.length;
+            if (nextNo > GLOSSARY_DATA.length) nextNo = 1;
+            openTermModal(nextNo);
+        }
+
+        function closeTermModal() {
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            document.getElementById('termDetailModal').classList.add('hidden');
+        }
+
+        function closeModalOnBackdrop(event) {
+            if (event.target.id === 'termDetailModal') {
+                closeTermModal();
+            }
+        }
+
+        function speakTerm(no) {
+            const item = GLOSSARY_DATA.find(d => d.no === no);
+            if (!item || !('speechSynthesis' in window)) {
+                showToast('이 브라우저에서는 음성 읽기(TTS)를 지원하지 않습니다.');
+                return;
+            }
+            window.speechSynthesis.cancel();
+            const utter = new SpeechSynthesisUtterance(`${item.termKo}. 현장 호칭은 ${item.slang} 입니다. ${item.definition}`);
+            utter.lang = 'ko-KR';
+            utter.rate = 0.98;
+            window.speechSynthesis.speak(utter);
+        }
+
+        // ==========================================
+        // TAB 3: 현장 은어 ↔ 표준어 번역기 테이블
+        // ==========================================
+        function quickSlangSearch(keyword) {
+            document.getElementById('slangSearchInput').value = keyword;
+            renderSlangTable();
+        }
+
+        function renderSlangTable() {
+            const q = (document.getElementById('slangSearchInput')?.value || '').trim().toLowerCase();
+            const tbody = document.getElementById('slangTableBody');
+
+            const filtered = GLOSSARY_DATA.filter(item => {
+                if (!q) return true;
+                return `${item.slang} ${item.termKo} ${item.termEn} ${item.definition}`.toLowerCase().includes(q);
+            });
+
+            tbody.innerHTML = filtered.map(item => `
+                <tr class="hover:bg-blue-50/50 transition cursor-pointer" onclick="openTermModal(${item.no})">
+                    <td class="py-3.5 px-4 font-extrabold text-slate-500">#${String(item.no).padStart(2, '0')}</td>
+                    <td class="py-3.5 px-4">
+                        <span class="inline-block px-2.5 py-1 rounded-lg bg-amber-100 text-amber-900 font-extrabold text-xs sm:text-sm">
+                            ${item.slang}
+                        </span>
+                    </td>
+                    <td class="py-3.5 px-4">
+                        <div class="font-extrabold text-slate-900">${item.termKo}</div>
+                        <div class="text-xs text-slate-500">${item.termEn}</div>
+                    </td>
+                    <td class="py-3.5 px-4 text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        <p class="font-medium">${item.definition}</p>
+                        <p class="text-xs text-red-600 font-bold mt-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i>${item.caution}</p>
+                    </td>
+                    <td class="py-3.5 px-4 text-center">
+                        <button class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 text-xs font-bold transition">
+                            도해 보기
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // ==========================================
+        // TAB 4: 3분 암기 플래시카드
+        // ==========================================
+        function initFlashcards() {
+            const sel = document.getElementById('fcCategorySelect')?.value || 'ALL';
+            if (sel === 'ALL') {
+                fcDeck = [...GLOSSARY_DATA];
+            } else if (sel === 'UNLEARNED') {
+                fcDeck = GLOSSARY_DATA.filter(d => !learnedTerms.has(d.no));
+                if (fcDeck.length === 0) {
+                    showToast('모든 용어를 학습 완료하여 전체 66개 카드를 불러옵니다.');
+                    fcDeck = [...GLOSSARY_DATA];
+                }
+            } else {
+                fcDeck = GLOSSARY_DATA.filter(d => d.category === sel);
+            }
+            fcIndex = 0;
+            fcFlipped = false;
+            renderCurrentFlashcard();
+        }
+
+        function shuffleFlashcards() {
+            for (let i = fcDeck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [fcDeck[i], fcDeck[j]] = [fcDeck[j], fcDeck[i]];
+            }
+            fcIndex = 0;
+            fcFlipped = false;
+            renderCurrentFlashcard();
+            showToast('플래시카드 순서를 무작위로 섞었습니다.');
+        }
+
+        function renderCurrentFlashcard() {
+            if (fcDeck.length === 0) return;
+            const item = fcDeck[fcIndex];
+            const inner = document.getElementById('fcCardInner');
+            fcFlipped = false;
+            inner.classList.remove('rotate-y-180');
+
+            document.getElementById('fcIndexLabel').textContent = `카드 ${fcIndex + 1} / ${fcDeck.length}`;
+            const isLearned = learnedTerms.has(item.no);
+            const badge = document.getElementById('fcLearnedBadge');
+            badge.textContent = isLearned ? '✓ 학습 완료' : '미학습';
+            badge.className = isLearned
+                ? 'px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold'
+                : 'px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold';
+
+            document.getElementById('fcFrontCategory').textContent = `${item.category} · ${item.process}`;
+            document.getElementById('fcFrontNo').textContent = `TERM #${String(item.no).padStart(2, '0')}`;
+            document.getElementById('fcFrontTitle').textContent = item.termKo;
+            document.getElementById('fcFrontEng').textContent = item.termEn;
+            document.getElementById('fcFrontSlang').textContent = item.slang;
+            document.getElementById('fcFrontProcess').textContent = `적용: ${item.process}`;
+
+            document.getElementById('fcBackTitle').textContent = `#${item.no} ${item.termKo} (${item.slang})`;
+            document.getElementById('fcBackDef').textContent = item.definition;
+            document.getElementById('fcBackCaution').textContent = item.caution;
+        }
+
+        function flipFlashcard() {
+            fcFlipped = !fcFlipped;
+            document.getElementById('fcCardInner').classList.toggle('rotate-y-180', fcFlipped);
+        }
+
+        function prevFlashcard() {
+            fcIndex = (fcIndex - 1 + fcDeck.length) % fcDeck.length;
+            renderCurrentFlashcard();
+        }
+
+        function nextFlashcard() {
+            fcIndex = (fcIndex + 1) % fcDeck.length;
+            renderCurrentFlashcard();
+        }
+
+        function markCurrentFlashcard(isLearned) {
+            const item = fcDeck[fcIndex];
+            if (isLearned) {
+                learnedTerms.add(item.no);
+                showToast(`#${item.no} '${item.termKo}' 학습 완료!`);
+            } else {
+                learnedTerms.delete(item.no);
+                showToast(`#${item.no} '${item.termKo}' 복습 필요로 표시했습니다.`);
+            }
+            saveProgress();
+            renderGlossaryCards();
+            nextFlashcard();
+        }
+
+        // ==========================================
+        // TAB 5: 실전 안전·용어 퀴즈 & 수료증 발급
+        // ==========================================
+        function startNewQuiz(questionCount = 10) {
+            document.getElementById('quizResultContainer').classList.add('hidden');
+            document.getElementById('quizActiveContainer').classList.remove('hidden');
+
+            const shuffled = [...GLOSSARY_DATA].sort(() => Math.random() - 0.5).slice(0, questionCount);
+            quizQuestions = shuffled.map((item, idx) => {
+                const mode = idx % 3; // 0: 은어->표준어, 1: 주의사항->용어, 2: 정의->용어
+                const distractors = GLOSSARY_DATA
+                    .filter(d => d.no !== item.no)
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, 3);
+
+                let questionText = '';
+                let contextBox = '';
+                if (mode === 0) {
+                    questionText = `현장 선임 작업자가 사용하는 다음 [현장 호칭/은어]가 가리키는 표준 용어는 무엇입니까?`;
+                    contextBox = `🗣️ 현장 호칭: "${item.slang}"\n📘 힌트: ${item.definition}`;
+                } else if (mode === 1) {
+                    questionText = `다음 [현장 불량·안전 절대 주의사항]이 적용되는 핵심 용어는 무엇입니까?`;
+                    contextBox = `🚨 현장 주의사항: "${item.caution}"`;
+                } else {
+                    questionText = `다음 [작업자용 핵심 정의]가 설명하는 현장 표준 용어는 무엇입니까?`;
+                    contextBox = `📘 정의: "${item.definition}"\n🏭 적용 공정: ${item.process}`;
+                }
+
+                const options = [item, ...distractors].sort(() => Math.random() - 0.5);
+                return {
+                    target: item,
+                    questionText,
+                    contextBox,
+                    options
+                };
+            });
+
+            quizCurrentIdx = 0;
+            quizScore = 0;
+            quizAnswered = false;
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            const q = quizQuestions[quizCurrentIdx];
+            const total = quizQuestions.length;
+            const container = document.getElementById('quizActiveContainer');
+
+            container.innerHTML = `
+                <div class="flex items-center justify-between text-xs font-extrabold text-slate-500">
+                    <span>QUESTION ${quizCurrentIdx + 1} OF ${total}</span>
+                    <span class="text-blue-600">현재 점수: ${Math.round((quizScore / total) * 100)}점</span>
+                </div>
+                <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-blue-600 transition-all duration-300" style="width: ${((quizCurrentIdx + 1) / total) * 100}%"></div>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+                    <h3 class="text-base sm:text-lg font-extrabold text-slate-900">${q.questionText}</h3>
+                    <div class="p-4 rounded-xl bg-white border border-slate-200 text-sm text-slate-800 whitespace-pre-line leading-relaxed font-medium">${q.contextBox}</div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2" id="quizOptionsGrid">
+                        ${q.options.map((opt, idx) => `
+                            <button onclick="selectQuizAnswer(${idx})" id="quizOpt-${idx}" class="p-4 rounded-xl bg-white hover:bg-blue-50 border-2 border-slate-200 hover:border-blue-500 text-left transition flex flex-col justify-between">
+                                <div class="font-extrabold text-slate-900 text-sm sm:text-base">${idx + 1}. ${opt.termKo}</div>
+                                <div class="text-xs text-slate-500 mt-1">${opt.termEn} · ${opt.category}</div>
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <div id="quizFeedbackBox" class="hidden p-4 rounded-xl text-sm"></div>
+
+                    <div class="flex justify-end pt-2">
+                        <button id="quizNextBtn" onclick="nextQuizQuestion()" class="hidden px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-blue-600 text-white font-extrabold text-sm transition">
+                            ${quizCurrentIdx + 1 === total ? '결과 및 수료증 확인 →' : '다음 문제 →'}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectQuizAnswer(selectedIdx) {
+            if (quizAnswered) return;
+            quizAnswered = true;
+
+            const q = quizQuestions[quizCurrentIdx];
+            const chosen = q.options[selectedIdx];
+            const isCorrect = chosen.no === q.target.no;
+
+            if (isCorrect) {
+                quizScore++;
+                learnedTerms.add(q.target.no);
+                saveProgress();
+            }
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.getElementById(`quizOpt-${idx}`);
+                if (opt.no === q.target.no) {
+                    btn.className = 'p-4 rounded-xl bg-emerald-50 border-2 border-emerald-600 text-left';
+                } else if (idx === selectedIdx && !isCorrect) {
+                    btn.className = 'p-4 rounded-xl bg-red-50 border-2 border-red-500 text-left';
+                } else {
+                    btn.className = 'p-4 rounded-xl bg-white border border-slate-200 opacity-50 text-left';
+                }
+            });
+
+            const fb = document.getElementById('quizFeedbackBox');
+            fb.classList.remove('hidden');
+            fb.className = isCorrect
+                ? 'p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-xs sm:text-sm space-y-1'
+                : 'p-4 rounded-xl bg-red-50 border border-red-200 text-red-950 text-xs sm:text-sm space-y-1';
+
+            fb.innerHTML = `
+                <div class="font-extrabold">${isCorrect ? '⭕ 정답입니다! (자동 학습완료 반영)' : `❌ 아쉽습니다! 정답은 [${q.target.termKo}] 입니다.`}</div>
+                <div><strong>선임의 조언:</strong> ${q.target.dialogue}</div>
+            `;
+
+            document.getElementById('quizNextBtn').classList.remove('hidden');
+        }
+
+        function nextQuizQuestion() {
+            quizAnswered = false;
+            quizCurrentIdx++;
+            if (quizCurrentIdx >= quizQuestions.length) {
+                renderQuizResult();
+            } else {
+                renderQuizQuestion();
+            }
+        }
+
+        function renderQuizResult() {
+            document.getElementById('quizActiveContainer').classList.add('hidden');
+            const res = document.getElementById('quizResultContainer');
+            res.classList.remove('hidden');
+
+            const total = quizQuestions.length;
+            const finalScore = Math.round((quizScore / total) * 100);
+            const passed = finalScore >= 80;
+            const todayStr = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+
+            res.innerHTML = `
+                <div class="p-8 rounded-3xl border-4 ${passed ? 'border-amber-400 bg-gradient-to-b from-amber-50/40 to-white' : 'border-slate-300 bg-slate-50'} text-center space-y-5 shadow-lg">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl ${passed ? 'bg-amber-400 text-slate-900' : 'bg-slate-200 text-slate-600'} text-3xl">
+                        <i class="fa-solid ${passed ? 'fa-award' : 'fa-rotate-right'}"></i>
+                    </div>
+                    <div>
+                        <span class="px-3 py-1 rounded-full text-xs font-extrabold ${passed ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
+                            ${passed ? '축하합니다! 온보딩 평가 합격 (80점 이상)' : '재도전 필요 (수료 기준 80점)'}
+                        </span>
+                        <h3 class="text-3xl font-extrabold text-slate-900 mt-2">최종 획득 점수: <span class="text-blue-600">${finalScore}점</span> (${quizScore} / ${total}문항)</h3>
+                    </div>
+
+                    ${passed ? `
+                        <div class="max-w-xl mx-auto p-6 rounded-2xl bg-white border-2 border-slate-800 text-left space-y-3 shadow-sm">
+                            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                                <span class="text-xs font-extrabold text-blue-600 uppercase tracking-widest">CERTIFICATE OF COMPLETION</span>
+                                <span class="text-xs font-bold text-slate-500">${todayStr}</span>
+                            </div>
+                            <h4 class="text-lg font-extrabold text-slate-900 text-center py-1">신규 현장 작업자 필수 용어집 66선 교육 수료증</h4>
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 text-xs">
+                                <label class="font-bold text-slate-700 shrink-0">수료자 성명 / 사번:</label>
+                                <input type="text" placeholder="성명 및 사번을 입력하세요 (인쇄 시 반영)" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 font-bold text-slate-900">
+                            </div>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                위 작업자는 반도체·파인세라믹 정밀가공·화공에칭·세정·측정·안전 66대 핵심 현장 용어 및 불량 예방 안전 수칙 과정을 우수한 성적(${finalScore}점)으로 이수하였음을 인증합니다.
+                            </p>
+                        </div>
+                    ` : `
+                        <p class="text-sm text-slate-600">틀린 용어를 복습한 뒤 다시 한 번 80점 이상 수료에 도전해 보세요!</p>
+                    `}
+
+                    <div class="flex flex-wrap justify-center gap-3 pt-2 no-print">
+                        <button onclick="startNewQuiz(${total})" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition">
+                            <i class="fa-solid fa-rotate-right mr-1"></i>새로운 문제로 재응시
+                        </button>
+                        ${passed ? `
+                            <button onclick="window.print()" class="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm transition">
+                                <i class="fa-solid fa-print mr-1"></i>수료증 인쇄 / PDF 저장
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // CSV 파일 업로드 파서 & 다운로드 기능
+        // ==========================================
+        function parseCSVRows(text) {
+            const rows = [];
+            let row = [];
+            let cur = '';
+            let inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                const c = text[i];
+                const next = text[i + 1];
+                if (inQuotes) {
+                    if (c === '"' && next === '"') {
+                        cur += '"';
+                        i++;
+                    } else if (c === '"') {
+                        inQuotes = false;
+                    } else {
+                        cur += c;
+                    }
+                } else {
+                    if (c === '"') {
+                        inQuotes = true;
+                    } else if (c === ',') {
+                        row.push(cur.trim());
+                        cur = '';
+                    } else if (c === '\n' || c === '\r') {
+                        if (c === '\r' && next === '\n') i++;
+                        row.push(cur.trim());
+                        if (row.some(cell => cell !== '')) rows.push(row);
+                        row = [];
+                        cur = '';
+                    } else {
+                        cur += c;
+                    }
+                }
+            }
+            if (cur !== '' || row.length > 0) {
+                row.push(cur.trim());
+                if (row.some(cell => cell !== '')) rows.push(row);
+            }
+            return rows;
+        }
+
+        function handleCSVUpload(event) {
+            const file = event.target.files?.[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const text = e.target.result;
+                    const rows = parseCSVRows(text);
+                    const parsedItems = [];
+
+                    rows.forEach(r => {
+                        const noVal = parseInt(r[0], 10);
+                        if (!isNaN(noVal) && noVal >= 1 && noVal <= 200 && r.length >= 6) {
+                            const rawTerm = r[2] || '';
+                            const parenIdx = rawTerm.indexOf('(');
+                            const termKo = parenIdx > -1 ? rawTerm.slice(0, parenIdx).trim() : rawTerm.trim();
+                            const termEn = parenIdx > -1 ? rawTerm.slice(parenIdx).trim() : '';
+
+                            parsedItems.push({
+                                no: noVal,
+                                category: (r[1] || '소재').trim(),
+                                termKo: termKo || rawTerm,
+                                termEn: termEn,
+                                slang: r[3] || '-',
+                                definition: r[4] || '',
+                                process: r[5] || '',
+                                caution: r[6] || '',
+                                dialogue: `선임: "${termKo}(${r[3] || termKo}) 작업할 때는 ${r[6] || '안전 및 품질 수칙을 반드시 준수해!'}"`
+                            });
+                        }
+                    });
+
+                    if (parsedItems.length > 0) {
+                        GLOSSARY_DATA = parsedItems;
+                        renderGlossaryCards();
+                        renderSlangTable();
+                        initFlashcards();
+                        updateProgressUI();
+                        showToast(`교안 CSV 파일에서 총 ${parsedItems.length}개 현장 용어를 성공적으로 불러왔습니다!`);
+                    } else {
+                        showToast('CSV 형식을 확인해 주세요. 기본 66개 현장 용어 데이터를 유지합니다.');
+                    }
+                } catch (err) {
+                    showToast('CSV 파일 처리 중 오류가 발생했습니다.');
+                }
+            };
+            reader.readAsText(file, 'UTF-8');
+        }
+
+        function exportCSV() {
+            const headers = ['No', '구분', '표준 용어 (국문/영문)', '현장 호칭 / 은어', '작업자용 핵심 정의', '적용 소재·공정', '현장 작업 시 주의사항 (불량·안전 연관)'];
+            const csvLines = [headers.join(',')];
+
+            GLOSSARY_DATA.forEach(item => {
+                const cols = [
+                    item.no,
+                    `"${item.category.replace(/"/g, '""')}"`,
+                    `"${(item.termKo + ' ' + item.termEn).trim().replace(/"/g, '""')}"`,
+                    `"${item.slang.replace(/"/g, '""')}"`,
+                    `"${item.definition.replace(/"/g, '""')}"`,
+                    `"${item.process.replace(/"/g, '""')}"`,
+                    `"${item.caution.replace(/"/g, '""')}"`
+                ];
+                csvLines.push(cols.join(','));
+            });
+
+            const bom = '\uFEFF';
+            const blob = new Blob([bom + csvLines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '현장작업자_필수용어집_66선_표준교안.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('66개 현장 용어집 CSV 파일이 다운로드되었습니다.');
+        }
+
+        // ==========================================
+        // 토스트 알림창
+        // ==========================================
+        let toastTimer = null;
+        function showToast(msg) {
+            const toast = document.getElementById('toastMessage');
+            document.getElementById('toastText').textContent = msg;
+            toast.classList.remove('hidden');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
